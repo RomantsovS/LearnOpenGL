@@ -1,9 +1,15 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.11)
 project(LearnOpenGL VERSION 0.1.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+if (MSVC)
+    set(MY_COMLILE_OPTIONS /W4 /WX)
+else ()
+    set(MY_COMLILE_OPTIONS -Wall -Wextra -pedantic -Werror -Wshadow -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC)
+endif()
 
 find_package(glfw3 3.3 REQUIRED)
 message(STATUS "Found GLFW3 in ${GLFW3_INCLUDE_DIR}")
@@ -20,10 +26,10 @@ set (CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ldl")
 include(CTest)
 enable_testing()
 
-add_library(GLAD "glad.c")
+add_library(GLAD "third_party/glad.c")
 set(LIBS ${LIBS} GLAD)
 
 add_executable(1.out 1/main.cpp)
 target_link_libraries(1.out ${LIBS})
 
-include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/third_party/include)
