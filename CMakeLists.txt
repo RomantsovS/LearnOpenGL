@@ -1,0 +1,29 @@
+cmake_minimum_required(VERSION 3.0.0)
+project(LearnOpenGL VERSION 0.1.0 LANGUAGES C CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS ON)
+
+find_package(glfw3 3.3 REQUIRED)
+message(STATUS "Found GLFW3 in ${GLFW3_INCLUDE_DIR}")
+
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
+find_package(OpenGL REQUIRED)
+add_definitions(${OPENGL_DEFINITIONS})
+find_package(X11 REQUIRED)
+# note that the order is important for setting the libs
+# use pkg-config --libs $(pkg-config --print-requires --print-requires-private glfw3) in a terminal to confirm
+set(LIBS glfw X11 Xrandr OpenGL::GL dl pthread ${ASSIMP_LIBRARY})
+set (CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ldl")
+
+include(CTest)
+enable_testing()
+
+add_library(GLAD "glad.c")
+set(LIBS ${LIBS} GLAD)
+
+add_executable(1.out 1/main.cpp)
+target_link_libraries(1.out ${LIBS})
+
+include_directories(${CMAKE_SOURCE_DIR}/include)
