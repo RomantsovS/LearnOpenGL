@@ -30,6 +30,10 @@ add_library(GLAD "third_party/glad.c")
 target_include_directories(GLAD PRIVATE ${CMAKE_SOURCE_DIR}/third_party/include)
 set(LIBS ${LIBS} GLAD)
 
-add_executable(1.out 1/main.cpp)
+add_executable(1.out 1_shader/main.cpp)
 target_link_libraries(1.out ${LIBS})
 target_include_directories(1.out PRIVATE ${CMAKE_SOURCE_DIR}/third_party/include ${CMAKE_SOURCE_DIR})
+
+add_executable(2.out 2_texture/main.cpp)
+target_link_libraries(2.out ${LIBS})
+target_include_directories(2.out PRIVATE ${CMAKE_SOURCE_DIR}/third_party/include ${CMAKE_SOURCE_DIR})
