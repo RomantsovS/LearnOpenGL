@@ -27,9 +27,9 @@ include(CTest)
 enable_testing()
 
 add_library(GLAD "third_party/glad.c")
+target_include_directories(GLAD PRIVATE ${CMAKE_SOURCE_DIR}/third_party/include)
 set(LIBS ${LIBS} GLAD)
 
 add_executable(1.out 1/main.cpp)
 target_link_libraries(1.out ${LIBS})
-
-include_directories(${CMAKE_SOURCE_DIR}/third_party/include)
+target_include_directories(1.out PRIVATE ${CMAKE_SOURCE_DIR}/third_party/include ${CMAKE_SOURCE_DIR})
