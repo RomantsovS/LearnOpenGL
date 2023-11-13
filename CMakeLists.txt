@@ -37,3 +37,7 @@ target_include_directories(1.out PRIVATE ${CMAKE_SOURCE_DIR}/third_party/include
 add_executable(2.out 2_texture/main.cpp)
 target_link_libraries(2.out ${LIBS})
 target_include_directories(2.out PRIVATE ${CMAKE_SOURCE_DIR}/third_party/include ${CMAKE_SOURCE_DIR})
+
+add_executable(3.out 3_transformations/main.cpp)
+target_link_libraries(3.out ${LIBS})
+target_include_directories(3.out PRIVATE ${CMAKE_SOURCE_DIR}/third_party/include ${CMAKE_SOURCE_DIR})

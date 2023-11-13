@@ -95,7 +95,7 @@ int main() {
         ourShader.use();
         float timeValue = glfwGetTime();
         float greenValue = sin(timeValue) / 2.0f + 0.5f;
-        ourShader.set4f("ourColor", 0.0f, greenValue, 0.0f, 1.0f);
+        ourShader.setVec4("ourColor", 0.0f, greenValue, 0.0f, 1.0f);
 
         float offset = sin(timeValue) / 2.0f;
         ourShader.setFloat("offset", offset);
