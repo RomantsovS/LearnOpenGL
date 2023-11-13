@@ -51,3 +51,8 @@ set(target 6_1_coordinate_systems)
 add_executable("${target}.out" "${target}/main.cpp")
 target_link_libraries("${target}.out" ${LIBS})
 target_include_directories("${target}.out" PRIVATE ${Commot_include})
+
+set(target 7_1_camera)
+add_executable("${target}.out" "${target}/main.cpp")
+target_link_libraries("${target}.out" ${LIBS})
+target_include_directories("${target}.out" PRIVATE ${Commot_include})
