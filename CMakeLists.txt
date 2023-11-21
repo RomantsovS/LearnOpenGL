@@ -34,6 +34,7 @@ set(Commot_include ${CMAKE_SOURCE_DIR}/third_party/include ${CMAKE_SOURCE_DIR})
 
 set(CHAPTERS
     1.getting_started
+    2.lighting
 )
 
 set(1.getting_started
@@ -42,6 +43,10 @@ set(1.getting_started
     5.1.transformations
     6.1.coordinate_systems
     7.1.camera
+)
+
+set(2.lighting
+    1.colors
 )
 
 function(create_project_from_sources chapter demo)

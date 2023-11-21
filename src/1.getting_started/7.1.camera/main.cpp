@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 #include <learnopengl/camera.h>
-#include <learnopengl/shader_s.h>
+#include <learnopengl/shader.h>
 #include <stb_image.h>
 
 #include <glm/glm.hpp>

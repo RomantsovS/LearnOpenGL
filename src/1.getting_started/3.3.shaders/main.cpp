@@ -1,7 +1,7 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
-#include <learnopengl/shader_s.h>
+#include <learnopengl/shader.h>
 
 #include <cmath>
 #include <iostream>
