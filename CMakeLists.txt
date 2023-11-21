@@ -32,27 +32,37 @@ set(LIBS ${LIBS} GLAD)
 
 set(Commot_include ${CMAKE_SOURCE_DIR}/third_party/include ${CMAKE_SOURCE_DIR})
 
-set(target 3_3_shader)
-add_executable("${target}.out" "${target}/main.cpp")
-target_link_libraries("${target}.out" ${LIBS})
-target_include_directories("${target}.out" PRIVATE ${Commot_include})
+set(CHAPTERS
+    1.getting_started
+)
 
-set(target 4_1_texture)
-add_executable("${target}.out" "${target}/main.cpp")
-target_link_libraries("${target}.out" ${LIBS})
-target_include_directories("${target}.out" PRIVATE ${Commot_include})
+set(1.getting_started
+    3.3.shaders
+    4.1.textures
+    5.1.transformations
+    6.1.coordinate_systems
+    7.1.camera
+)
 
-set(target 5_1_transformations)
-add_executable("${target}.out" "${target}/main.cpp")
-target_link_libraries("${target}.out" ${LIBS})
-target_include_directories("${target}.out" PRIVATE ${Commot_include})
+function(create_project_from_sources chapter demo)
+	file(GLOB SOURCE
+            "src/${chapter}/${demo}/*.h"
+            "src/${chapter}/${demo}/*.cpp"
+    )
+	if (demo STREQUAL "")
+		SET(replaced "")
+		string(REPLACE "/" "_" replaced ${chapter})
+		set(NAME ${replaced})
+	else()
+		set(NAME "${chapter}__${demo}")
+	endif()
+    add_executable(${NAME} ${SOURCE})
+    target_link_libraries(${NAME} ${LIBS})
+    target_include_directories(${NAME} PRIVATE ${Commot_include})
+endfunction()
 
-set(target 6_1_coordinate_systems)
-add_executable("${target}.out" "${target}/main.cpp")
-target_link_libraries("${target}.out" ${LIBS})
-target_include_directories("${target}.out" PRIVATE ${Commot_include})
-
-set(target 7_1_camera)
-add_executable("${target}.out" "${target}/main.cpp")
-target_link_libraries("${target}.out" ${LIBS})
-target_include_directories("${target}.out" PRIVATE ${Commot_include})
+foreach(CHAPTER ${CHAPTERS})
+    foreach(DEMO ${${CHAPTER}})
+		create_project_from_sources(${CHAPTER} ${DEMO})
+    endforeach(DEMO)
+endforeach(CHAPTER)

@@ -62,13 +62,14 @@ class Camera {
         Pitch = pitch;
         updateCameraVectors();
     }
+    virtual ~Camera() = default;
 
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
     glm::mat4 GetViewMatrix() { return glm::lookAt(Position, Position + Front, Up); }
 
     // processes input received from any keyboard-like input system. Accepts input parameter in the
     // form of camera defined ENUM (to abstract it from windowing systems)
-    void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
+    virtual void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
         float velocity = MovementSpeed * deltaTime;
         if (direction == FORWARD) Position += Front * velocity;
         if (direction == BACKWARD) Position -= Front * velocity;
@@ -119,4 +120,20 @@ class Camera {
         Up = glm::normalize(glm::cross(Right, Front));
     }
 };
+
+class CameraFPS : public Camera {
+   public:
+    CameraFPS(glm::vec3 position) : Camera(position) {}
+
+    void ProcessKeyboard(Camera_Movement direction, float deltaTime) override {
+        float velocity = MovementSpeed * deltaTime;
+        auto forward_vec = Front;
+        forward_vec[1] = 0.0f;
+        if (direction == FORWARD) Position += forward_vec * velocity;
+        if (direction == BACKWARD) Position -= forward_vec * velocity;
+        if (direction == LEFT) Position -= Right * velocity;
+        if (direction == RIGHT) Position += Right * velocity;
+    }
+};
+
 #endif
