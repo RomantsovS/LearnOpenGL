@@ -48,6 +48,7 @@ set(1.getting_started
 set(2.lighting
     1.colors
     2.1.basic_lighting
+    3.1.materials
 )
 
 function(create_project_from_sources chapter demo)
