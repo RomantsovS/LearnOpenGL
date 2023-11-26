@@ -49,6 +49,7 @@ set(2.lighting
     1.colors
     2.1.basic_lighting
     3.1.materials
+    4.1.lighting_maps_diffuse_map
 )
 
 function(create_project_from_sources chapter demo)
