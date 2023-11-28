@@ -13,6 +13,8 @@ endif()
 
 find_package(glfw3 3.3 REQUIRED)
 message(STATUS "Found GLFW3 in ${GLFW3_INCLUDE_DIR}")
+find_package(assimp REQUIRED)
+message(STATUS "Found ASSIMP in ${ASSIMP_INCLUDE_DIR}")
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 find_package(OpenGL REQUIRED)
@@ -20,7 +22,7 @@ add_definitions(${OPENGL_DEFINITIONS})
 find_package(X11 REQUIRED)
 # note that the order is important for setting the libs
 # use pkg-config --libs $(pkg-config --print-requires --print-requires-private glfw3) in a terminal to confirm
-set(LIBS glfw X11 Xrandr OpenGL::GL dl pthread ${ASSIMP_LIBRARY})
+set(LIBS glfw X11 Xrandr OpenGL::GL dl pthread ${ASSIMP_LIBRARIES})
 set (CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ldl")
 
 include(CTest)
@@ -30,11 +32,12 @@ add_library(GLAD "third_party/glad.c")
 target_include_directories(GLAD PRIVATE ${CMAKE_SOURCE_DIR}/third_party/include)
 set(LIBS ${LIBS} GLAD)
 
-set(Commot_include ${CMAKE_SOURCE_DIR}/third_party/include ${CMAKE_SOURCE_DIR})
+set(Common_include ${CMAKE_SOURCE_DIR}/third_party/include ${CMAKE_SOURCE_DIR})
 
 set(CHAPTERS
     1.getting_started
     2.lighting
+    3.model_loading
 )
 
 set(1.getting_started
@@ -56,6 +59,10 @@ set(2.lighting
     6.multiple_lights
 )
 
+set(3.model_loading
+    1.model_loading
+)
+
 function(create_project_from_sources chapter demo)
 	file(GLOB SOURCE
             "src/${chapter}/${demo}/*.h"
@@ -70,7 +77,7 @@ function(create_project_from_sources chapter demo)
 	endif()
     add_executable(${NAME} ${SOURCE})
     target_link_libraries(${NAME} ${LIBS})
-    target_include_directories(${NAME} PRIVATE ${Commot_include})
+    target_include_directories(${NAME} PRIVATE ${Common_include})
 endfunction()
 
 foreach(CHAPTER ${CHAPTERS})
