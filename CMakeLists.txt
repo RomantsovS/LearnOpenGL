@@ -25,19 +25,21 @@ find_package(X11 REQUIRED)
 set(LIBS glfw X11 Xrandr OpenGL::GL dl pthread ${ASSIMP_LIBRARIES})
 set (CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ldl")
 
-include(CTest)
-enable_testing()
+# include(CTest)
+# enable_testing()
 
 add_library(GLAD "third_party/glad.c")
 target_include_directories(GLAD PRIVATE ${CMAKE_SOURCE_DIR}/third_party/include)
-set(LIBS ${LIBS} GLAD)
 
 set(Common_include ${CMAKE_SOURCE_DIR}/third_party/include ${CMAKE_SOURCE_DIR})
+
+set(LIBS ${LIBS} GLAD)
 
 set(CHAPTERS
     1.getting_started
     2.lighting
     3.model_loading
+    4.advanced_opengl
 )
 
 set(1.getting_started
@@ -61,6 +63,11 @@ set(2.lighting
 
 set(3.model_loading
     1.model_loading
+)
+
+set(4.advanced_opengl
+    1.depth_testing
+    2.stencil_testing
 )
 
 function(create_project_from_sources chapter demo)
