@@ -31,6 +31,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 bool wireframe = false;
+float scale = 1.0;
 
 int main() {
     // glfw: initialize and configure
@@ -68,7 +69,7 @@ int main() {
     }
 
     // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
-    stbi_set_flip_vertically_on_load(true);
+    // stbi_set_flip_vertically_on_load(true);
 
     // configure global opengl state
     // -----------------------------
@@ -81,7 +82,8 @@ int main() {
 
     // load models
     // -----------
-    Model ourModel("resources/objects/backpack/backpack.obj");
+    // Model ourModel("resources/objects/backpack/backpack.obj");
+    Model ourModel("resources/objects/cottage2/Cottage_FREE.obj");
 
     // render loop
     // -----------
@@ -142,7 +144,7 @@ int main() {
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+        model = glm::scale(model, glm::vec3(scale, scale, scale));
         lightingShader.setMat4("model", model);
         ourModel.Draw(lightingShader);
 
@@ -176,6 +178,9 @@ void processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) camera.ProcessMouseMovement(-sens, 0.0f);
 
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) wireframe = !wireframe;
+
+    if (glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS) scale += deltaTime;
+    if (glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS) scale -= deltaTime;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

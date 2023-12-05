@@ -60,6 +60,31 @@ class Model {
 
         // process ASSIMP's root node recursively
         processNode(scene->mRootNode, scene);
+
+        glm::vec3 min(0), max(0);
+        for (size_t i = 0; i < scene->mNumMeshes; ++i) {
+            const auto *mesh = scene->mMeshes[i];
+            std::cout << "mesh " << i << ": verts: " << mesh->mNumVertices << '\n';
+            for (size_t j = 0; j < mesh->mNumVertices; ++j) {
+                min.x = std::min(min.x, mesh->mVertices[j].x);
+                min.y = std::min(min.y, mesh->mVertices[j].y);
+                min.z = std::min(min.z, mesh->mVertices[j].z);
+
+                max.x = std::max(max.x, mesh->mVertices[j].x);
+                max.y = std::max(max.y, mesh->mVertices[j].y);
+                max.z = std::max(max.z, mesh->mVertices[j].z);
+            }
+        }
+        std::cout << "min: " << min.x << ' ' << min.y << ' ' << min.z << " max: " << max.x << ' '
+                  << max.y << ' ' << max.z << '\n';
+        for (size_t i = 0; i < scene->mNumMaterials; ++i) {
+            const auto *mat = scene->mMaterials[i];
+            std::cout << "material " << i << ": " << mat->GetName().C_Str() << '\n';
+        }
+        for (size_t i = 0; i < scene->mNumTextures; ++i) {
+            const auto *texture = scene->mTextures[i];
+            std::cout << "texture " << i << ": " << texture->mFilename.C_Str() << '\n';
+        }
     }
 
     // processes a node in a recursive fashion. Processes each individual mesh located at the node
@@ -185,6 +210,8 @@ class Model {
                 }
             }
             if (!skip) {  // if texture hasn't been loaded already, load it
+                std::cout << "texture "
+                          << ": " << str.C_Str() << '\n';
                 Texture texture;
                 texture.id = TextureFromFile(str.C_Str(), this->directory);
                 texture.type = typeName;
