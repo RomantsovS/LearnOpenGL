@@ -68,6 +68,8 @@ set(3.model_loading
 set(4.advanced_opengl
     1.depth_testing
     2.stencil_testing
+    3.1.blending_discard
+    3.2.blending_sort
 )
 
 function(create_project_from_sources chapter demo)
