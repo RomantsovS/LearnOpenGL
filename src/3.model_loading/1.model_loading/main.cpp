@@ -18,6 +18,11 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
+// lighting
+std::vector<glm::vec3> pointLightPositions{
+    glm::vec3(0.7f, 0.2f, 2.0f), glm::vec3(2.3f, -3.3f, -4.0f), glm::vec3(-4.0f, 2.0f, -12.0f),
+    glm::vec3(0.0f, 0.0f, -3.0f)};
+
 bool wireframe = false;
 float scale = 1.0;
 
@@ -68,12 +73,66 @@ int main() {
     Shader lightingShader("src/3.model_loading/1.model_loading/1.model_loading.vs",
                           "src/3.model_loading/1.model_loading/1.model_loading.fs");
 
+    Shader lightCubeShader("src/3.model_loading/1.model_loading/6.light_cube.vs",
+                           "src/3.model_loading/1.model_loading/6.light_cube.fs");
+
+    // set up vertex data (and buffer(s)) and configure vertex attributes
+    // ------------------------------------------------------------------
+    float vertices[] = {
+        // positions          // normals           // texture coords
+        -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f, 0.0f,  0.0f,  0.5f,  -0.5f, -0.5f, 0.0f,
+        0.0f,  -1.0f, 1.0f,  0.0f,  0.5f,  0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f, 1.0f,  1.0f,
+        0.5f,  0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f, 1.0f,  1.0f,  -0.5f, 0.5f,  -0.5f, 0.0f,
+        0.0f,  -1.0f, 0.0f,  1.0f,  -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f, 0.0f,  0.0f,
+
+        -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.5f,  -0.5f, 0.5f,  0.0f,
+        0.0f,  1.0f,  1.0f,  0.0f,  0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,  -0.5f, 0.5f,  0.5f,  0.0f,
+        0.0f,  1.0f,  0.0f,  1.0f,  -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+
+        -0.5f, 0.5f,  0.5f,  -1.0f, 0.0f,  0.0f,  1.0f,  0.0f,  -0.5f, 0.5f,  -0.5f, -1.0f,
+        0.0f,  0.0f,  1.0f,  1.0f,  -0.5f, -0.5f, -0.5f, -1.0f, 0.0f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f,  0.0f,  0.0f,  1.0f,  -0.5f, -0.5f, 0.5f,  -1.0f,
+        0.0f,  0.0f,  0.0f,  0.0f,  -0.5f, 0.5f,  0.5f,  -1.0f, 0.0f,  0.0f,  1.0f,  0.0f,
+
+        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.5f,  0.5f,  -0.5f, 1.0f,
+        0.0f,  0.0f,  1.0f,  1.0f,  0.5f,  -0.5f, -0.5f, 1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+        0.5f,  -0.5f, -0.5f, 1.0f,  0.0f,  0.0f,  0.0f,  1.0f,  0.5f,  -0.5f, 0.5f,  1.0f,
+        0.0f,  0.0f,  0.0f,  0.0f,  0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+
+        -0.5f, -0.5f, -0.5f, 0.0f,  -1.0f, 0.0f,  0.0f,  1.0f,  0.5f,  -0.5f, -0.5f, 0.0f,
+        -1.0f, 0.0f,  1.0f,  1.0f,  0.5f,  -0.5f, 0.5f,  0.0f,  -1.0f, 0.0f,  1.0f,  0.0f,
+        0.5f,  -0.5f, 0.5f,  0.0f,  -1.0f, 0.0f,  1.0f,  0.0f,  -0.5f, -0.5f, 0.5f,  0.0f,
+        -1.0f, 0.0f,  0.0f,  0.0f,  -0.5f, -0.5f, -0.5f, 0.0f,  -1.0f, 0.0f,  0.0f,  1.0f,
+
+        -0.5f, 0.5f,  -0.5f, 0.0f,  1.0f,  0.0f,  0.0f,  1.0f,  0.5f,  0.5f,  -0.5f, 0.0f,
+        1.0f,  0.0f,  1.0f,  1.0f,  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,  -0.5f, 0.5f,  0.5f,  0.0f,
+        1.0f,  0.0f,  0.0f,  0.0f,  -0.5f, 0.5f,  -0.5f, 0.0f,  1.0f,  0.0f,  0.0f,  1.0f};
+
+    // first, configure the cube's VAO (and VBO)
+    unsigned int VBO, cubeVAO;
+    glGenVertexArrays(1, &cubeVAO);
+    glGenBuffers(1, &VBO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    unsigned int lightCubeVAO;
+    glGenVertexArrays(1, &lightCubeVAO);
+    glBindVertexArray(lightCubeVAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    // note that we update the lamp's position attribute's stride to reflect the updated buffer data
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
     // load models
     // -----------
     std::vector<RenderModel> models;
-    models.push_back({Model("resources/objects/cottage/cottage_obj.obj"), glm::vec3{-10, 0, 0},
+    models.push_back({Model("resources/objects/cottage/cottage_obj.obj"), glm::vec3{0, 0, -10},
                       glm::vec3{0.5f, 0.5f, 0.5f}, 0});
-    models.push_back({Model("resources/objects/cottage2/Cottage_FREE.obj"), glm::vec3{10, 0, 10},
+    models.push_back({Model("resources/objects/cottage2/Cottage_FREE.obj"), glm::vec3{0, 0, 10},
                       glm::vec3{1, 1, 1}, 0});
 
     // render loop
@@ -94,7 +153,7 @@ int main() {
 
         // render
         // ------
-        glClearColor(0.3f, 0.3f, 0.5f, 1.0f);
+        glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // don't forget to enable shader before setting uniforms
@@ -129,8 +188,36 @@ int main() {
 
         lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
         lightingShader.setVec3("dirLight.ambient", glm::vec3(0.1));
-        lightingShader.setVec3("dirLight.diffuse", glm::vec3(0.8));
+        lightingShader.setVec3("dirLight.diffuse", glm::vec3(0.2));
         lightingShader.setVec3("dirLight.specular", glm::vec3(0.8));
+
+        std::vector<glm::vec3> lightColors(pointLightPositions.size());
+
+        for (size_t i = 0; i < lightColors.size(); ++i) {
+            lightColors[i].x = sin(glfwGetTime() * (1) * 0.2 + 20 * i);
+            lightColors[i].y = cos(glfwGetTime() * (1) + 45 * i);
+            lightColors[i].z = sin(glfwGetTime() * (1) * 0.5 + 30 * i);
+
+            glm::vec3 diffuseColor = lightColors[i] * glm::vec3(0.5f);
+            glm::vec3 ambientColor = diffuseColor * glm::vec3(0.1f);
+
+            pointLightPositions[i].x = std::sin((float)glfwGetTime() * (1) + 45 * i) * (i + 8);
+            pointLightPositions[i].y = (1 + std::cos((float)glfwGetTime() / (1))) * (i + 5);
+            pointLightPositions[i].z = std::cos((float)glfwGetTime() * (1) + 90 * i) * (i + 15);
+
+            std::string name = "pointLights[";
+            name.append(std::to_string(i)).append("].");
+
+            lightingShader.setVec3(name + "position", pointLightPositions[i]);
+
+            lightingShader.setFloat(name + "constant", 1.0f);
+            lightingShader.setFloat(name + "linear", 0.09f);
+            lightingShader.setFloat(name + "quadratic", 0.032f);
+
+            lightingShader.setVec3(name + "ambient", ambientColor);
+            lightingShader.setVec3(name + "diffuse", diffuseColor);
+            lightingShader.setVec3(name + "specular", lightColors[i]);
+        }
 
         // render the loaded model
         for (const auto& mod : models) {
@@ -140,6 +227,21 @@ int main() {
             model = glm::rotate(model, glm::radians(mod.angle), glm::vec3(0.0f, 1.0f, 0.0f));
             lightingShader.setMat4("model", model);
             mod.model.Draw(lightingShader);
+        }
+
+        // also draw the lamp object
+        lightCubeShader.use();
+        for (size_t i = 0; i < pointLightPositions.size(); ++i) {
+            lightCubeShader.setVec3("lightColor", lightColors[i]);
+            lightCubeShader.setMat4("projection", projection);
+            lightCubeShader.setMat4("view", view);
+            auto model = glm::mat4(1.0f);
+            model = glm::translate(model, pointLightPositions[i]);
+            model = glm::scale(model, glm::vec3(0.2f));  // a smaller cube
+            lightCubeShader.setMat4("model", model);
+
+            glBindVertexArray(lightCubeVAO);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
