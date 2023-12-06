@@ -34,7 +34,7 @@ class Model {
     Model(string const &path, bool gamma = false) : gammaCorrection(gamma) { loadModel(path); }
 
     // draws the model, and thus all its meshes
-    void Draw(Shader &shader) {
+    void Draw(Shader &shader) const {
         for (unsigned int i = 0; i < meshes.size(); i++) meshes[i].Draw(shader);
     }
 
@@ -224,6 +224,13 @@ class Model {
         }
         return textures;
     }
+};
+
+struct RenderModel {
+    Model model;
+    glm::vec3 pos;
+    glm::vec3 scale;
+    float angle;
 };
 
 unsigned int TextureFromFile(const char *path, const string &directory, bool gamma) {

@@ -40,7 +40,7 @@ void processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
         camera.ProcessKeyboard(DOWN, deltaTime);
 
-    float sens = 4.0f;
+    float sens = 6.0f;
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) camera.ProcessMouseMovement(0.0f, sens);
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) camera.ProcessMouseMovement(0.0f, -sens);
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) camera.ProcessMouseMovement(sens, 0.0f);
