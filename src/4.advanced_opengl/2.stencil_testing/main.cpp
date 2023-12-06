@@ -19,7 +19,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 bool wireframe = false;
-float scale = 1.0;
+float scale = 1.1;
 
 int main() {
     // glfw: initialize and configure
@@ -207,7 +207,6 @@ int main() {
         glStencilMask(0x00);
         glDisable(GL_DEPTH_TEST);
         shaderSingleColor.use();
-        float scale = 1.1f;
         // cubes
         glBindVertexArray(cubeVAO);
         glBindTexture(GL_TEXTURE_2D, cubeTexture);
