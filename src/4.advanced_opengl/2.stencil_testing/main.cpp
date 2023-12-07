@@ -18,8 +18,8 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-bool wireframe = false;
 float scale = 1.1;
+bool enable = true;
 
 int main() {
     // glfw: initialize and configure

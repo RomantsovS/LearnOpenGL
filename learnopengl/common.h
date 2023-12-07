@@ -25,6 +25,7 @@ extern bool firstMouse;
 // timing
 extern float deltaTime;
 extern float scale;
+extern bool enable;
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react
 // accordingly
@@ -48,6 +49,8 @@ void processInput(GLFWwindow* window) {
 
     if (glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS) scale += deltaTime;
     if (glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS) scale -= deltaTime;
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) enable = !enable;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

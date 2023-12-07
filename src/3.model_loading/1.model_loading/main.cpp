@@ -23,8 +23,8 @@ std::vector<glm::vec3> pointLightPositions{
     glm::vec3(0.7f, 0.2f, 2.0f), glm::vec3(2.3f, -3.3f, -4.0f), glm::vec3(-4.0f, 2.0f, -12.0f),
     glm::vec3(0.0f, 0.0f, -3.0f)};
 
-bool wireframe = false;
 float scale = 1.0;
+bool enable = true;
 
 int main() {
     // glfw: initialize and configure
@@ -149,7 +149,7 @@ int main() {
         processInput(window);
 
         // draw in wireframe
-        glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
+        glPolygonMode(GL_FRONT_AND_BACK, enable ? GL_LINE : GL_FILL);
 
         // render
         // ------

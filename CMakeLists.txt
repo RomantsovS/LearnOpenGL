@@ -71,6 +71,8 @@ set(4.advanced_opengl
     3.1.blending_discard
     3.2.blending_sort
     4.faceculling
+    5.1.framebuffers
+    5.1.framebuffers_exercise
 )
 
 function(create_project_from_sources chapter demo)
