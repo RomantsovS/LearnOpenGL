@@ -4,22 +4,21 @@ out vec4 FragColor;
 in vec2 TexCoords;
 
 uniform sampler2D screenTexture;
-uniform float offset_delimeter;
 uniform bool enable;
 
 void main()
 {
-    float offset = 1.0 / offset_delimeter;
+    vec2 step_size = 1.0 / textureSize(screenTexture, 0);
     vec2 offsets[9] = vec2[](
-        vec2(-offset,  offset), // top-left
-        vec2( 0.0f,    offset), // top-center
-        vec2( offset,  offset), // top-right
-        vec2(-offset,  0.0f),   // center-left
-        vec2( 0.0f,    0.0f),   // center-center
-        vec2( offset,  0.0f),   // center-right
-        vec2(-offset, -offset), // bottom-left
-        vec2( 0.0f,   -offset), // bottom-center
-        vec2( offset, -offset)  // bottom-right    
+        vec2(-step_size.x, step_size.y), // top-left
+        vec2( 0.0f,        step_size.y), // top-center
+        vec2( step_size.x, step_size.y), // top-right
+        vec2(-step_size.x, 0.0f),   // center-left
+        vec2( 0.0f,        0.0f),   // center-center
+        vec2( step_size.x, 0.0f),   // center-right
+        vec2(-step_size.x, -step_size.y), // bottom-left
+        vec2( 0.0f,        -step_size.y), // bottom-center
+        vec2( step_size.x, -step_size.y)  // bottom-right    
     );
 
     float kernel[9] = float[](

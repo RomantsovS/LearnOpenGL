@@ -247,7 +247,6 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         screenShader.use();
-        screenShader.setFloat("offset_delimeter", std::max(1.0f, scale * 10));
         screenShader.setBool("enable", enable);
         glBindVertexArray(quadVAO);
         glBindTexture(GL_TEXTURE_2D, textureColorbuffer);  // use the color attachment texture as
