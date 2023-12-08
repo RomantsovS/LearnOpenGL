@@ -134,6 +134,8 @@ int main() {
                       glm::vec3{0.5f, 0.5f, 0.5f}, 0});
     models.push_back({Model("resources/objects/cottage2/Cottage_FREE.obj"), glm::vec3{0, 0, 10},
                       glm::vec3{1, 1, 1}, 0});
+    models.push_back({Model("resources/objects/tower/wooden_watch_tower2.obj"), glm::vec3{10, 0, 0},
+                      glm::vec3{1, 1, 1}, 0});
 
     // render loop
     // -----------
