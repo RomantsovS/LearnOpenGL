@@ -18,17 +18,17 @@ class Shader {
         // 1. retrieve the vertex/fragment source code from filePath
         std::string vertexCode;
         std::string fragmentCode;
-        std::ifstream vShaderFile;
-        std::ifstream fShaderFile;
+        std::ifstream vShaderFile(vertexPath);
+        std::ifstream fShaderFile(fragmentPath);
         // ensure ifstream objects can throw exceptions:
-        vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-        fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        // vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        // fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
         try {
             // open files
-            vShaderFile.open(vertexPath);
+            // vShaderFile.open(vertexPath);
             if (!vShaderFile.is_open())
                 throw std::runtime_error(std::string("failed to open: ") + vertexPath);
-            fShaderFile.open(fragmentPath);
+            // fShaderFile.open(fragmentPath);
             if (!fShaderFile.is_open())
                 throw std::runtime_error(std::string("failed to open: ") + fragmentPath);
             std::stringstream vShaderStream, fShaderStream;
