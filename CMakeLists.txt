@@ -75,6 +75,7 @@ set(4.advanced_opengl
     5.1.framebuffers_exercise
     6.1.cubemaps_skybox
     6.2.cubemaps_environment_mapping
+    8.advanced_glsl_ubo
 )
 
 function(create_project_from_sources chapter demo)
