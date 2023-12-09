@@ -136,7 +136,7 @@ int main() {
     // -------------
     unsigned int cubeTexture = loadTexture("resources/textures/container.jpg");
 
-    vector<std::string> faces{
+    std::vector<std::string> faces{
         "resources/textures/skybox/right.jpg", "resources/textures/skybox/left.jpg",
         "resources/textures/skybox/top.jpg",   "resources/textures/skybox/bottom.jpg",
         "resources/textures/skybox/front.jpg", "resources/textures/skybox/back.jpg"};

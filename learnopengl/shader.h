@@ -26,7 +26,11 @@ class Shader {
         try {
             // open files
             vShaderFile.open(vertexPath);
+            if (!vShaderFile.is_open())
+                throw std::runtime_error(std::string("failed to open: ") + vertexPath);
             fShaderFile.open(fragmentPath);
+            if (!fShaderFile.is_open())
+                throw std::runtime_error(std::string("failed to open: ") + fragmentPath);
             std::stringstream vShaderStream, fShaderStream;
             // read file's buffer contents into streams
             vShaderStream << vShaderFile.rdbuf();

@@ -15,7 +15,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 unsigned int loadTexture(const char* path);
-unsigned int loadCubemap(vector<std::string> faces);
+unsigned int loadCubemap(std::vector<std::string> faces);
 
 // camera
 extern Camera camera;
@@ -124,7 +124,7 @@ unsigned int loadTexture(char const* path) {
         stbi_image_free(data);
     } else {
         stbi_image_free(data);
-        throw std::runtime_error("Texture failed to load at path: "s + path);
+        throw std::runtime_error(std::string("Texture failed to load at path: ") + path);
     }
 
     return textureID;
@@ -139,7 +139,7 @@ unsigned int loadTexture(char const* path) {
 // +Z (front)
 // -Z (back)
 // -------------------------------------------------------
-unsigned int loadCubemap(vector<std::string> faces) {
+unsigned int loadCubemap(std::vector<std::string> faces) {
     unsigned int textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
@@ -153,7 +153,8 @@ unsigned int loadCubemap(vector<std::string> faces) {
             stbi_image_free(data);
         } else {
             stbi_image_free(data);
-            throw std::runtime_error("Cubemap texture failed to load at path: "s + faces[i]);
+            throw std::runtime_error(std::string("Cubemap texture failed to load at path: ") +
+                                     faces[i]);
         }
     }
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
