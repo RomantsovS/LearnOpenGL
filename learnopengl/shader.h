@@ -33,7 +33,7 @@ class Shader {
             // fShaderFile.open(fragmentPath);
             if (!fShaderFile.is_open())
                 throw std::runtime_error(std::string("failed to open: ") + fragmentPath);
-            if (!gShaderFile.is_open())
+            if (geometryPath && !gShaderFile.is_open())
                 throw std::runtime_error(std::string("failed to open: ") + geometryPath);
             std::stringstream vShaderStream, fShaderStream;
             // read file's buffer contents into streams
