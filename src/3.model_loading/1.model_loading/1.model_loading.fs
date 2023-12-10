@@ -34,6 +34,8 @@ uniform PointLight pointLights[NR_POINT_LIGHTS];
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir); 
 
 struct SpotLight {
+    bool enabled;
+
     vec3 position;
     vec3 direction;
     float cutOff;
@@ -110,6 +112,9 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 }
 
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
+    if(!light.enabled)
+        return vec3(0.0);
+        
     vec3 lightDir = normalize(light.position - fragPos);
     // diffuse 
     float diff = max(dot(normal, lightDir), 0.0);

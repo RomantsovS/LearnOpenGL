@@ -19,19 +19,22 @@ unsigned int loadCubemap(std::vector<std::string> faces);
 
 // camera
 extern Camera camera;
-extern float lastX;
-extern float lastY;
-extern bool firstMouse;
-
-// timing
-extern float deltaTime;
-extern float scale;
-extern bool enable;
+extern const unsigned int SCR_WIDTH;
+extern const unsigned int SCR_HEIGHT;
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react
 // accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow* window) {
+void processInput(GLFWwindow* window, float* scale, bool* enable1, bool* enable2 = nullptr) {
+    // per-frame time logic
+    // --------------------
+    static float lastFrame{};
+    static float deltaTime{};
+    static float currentFrame{};
+    currentFrame = static_cast<float>(glfwGetTime());
+    deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
+
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) camera.ProcessKeyboard(FORWARD, deltaTime);
@@ -42,16 +45,30 @@ void processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
         camera.ProcessKeyboard(DOWN, deltaTime);
 
-    float sens = 6.0f;
+    float sens = 10.0f;
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) camera.ProcessMouseMovement(0.0f, sens);
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) camera.ProcessMouseMovement(0.0f, -sens);
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) camera.ProcessMouseMovement(sens, 0.0f);
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) camera.ProcessMouseMovement(-sens, 0.0f);
 
-    if (glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS) scale += deltaTime;
-    if (glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS) scale -= deltaTime;
+    if (glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS) *scale += deltaTime;
+    if (glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS) *scale -= deltaTime;
 
-    if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) enable = !enable;
+    static auto last_switch = currentFrame;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) {
+        if (currentFrame - last_switch > 0.5f) {
+            last_switch = currentFrame;
+            *enable1 = !*enable1;
+        }
+    }
+
+    static auto last_switch2 = currentFrame;
+    if (enable2 && glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+        if (currentFrame - last_switch2 > 0.5f) {
+            last_switch2 = currentFrame;
+            *enable2 = !*enable2;
+        }
+    }
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -65,6 +82,10 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
+    static float lastX = SCR_WIDTH / 2.0f;
+    static float lastY = SCR_HEIGHT / 2.0f;
+    static bool firstMouse = true;
+
     float xpos = static_cast<float>(xposIn);
     float ypos = static_cast<float>(yposIn);
 

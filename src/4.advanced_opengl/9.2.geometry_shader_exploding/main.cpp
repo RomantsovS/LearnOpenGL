@@ -10,13 +10,6 @@ const unsigned int SCR_HEIGHT = 600;
 
 // camera
 Camera camera(glm::vec3(0.0f, 5.0f, 3.0f));
-float lastX = SCR_WIDTH / 2.0f;
-float lastY = SCR_HEIGHT / 2.0f;
-bool firstMouse = true;
-
-// timing
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
 
 // lighting
 std::vector<glm::vec3> pointLightPositions{
@@ -89,15 +82,9 @@ int main() {
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window)) {
-        // per-frame time logic
-        // --------------------
-        float currentFrame = static_cast<float>(glfwGetTime());
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
-
         // input
         // -----
-        processInput(window);
+        processInput(window, &scale, &enable);
 
         // draw in wireframe
         glPolygonMode(GL_FRONT_AND_BACK, enable ? GL_LINE : GL_FILL);

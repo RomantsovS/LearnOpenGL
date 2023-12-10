@@ -10,13 +10,6 @@ const unsigned int SCR_HEIGHT = 600;
 
 // camera
 Camera camera(glm::vec3(0.0f, 5.0f, 3.0f));
-float lastX = SCR_WIDTH / 2.0f;
-float lastY = SCR_HEIGHT / 2.0f;
-bool firstMouse = true;
-
-// timing
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
 
 // lighting
 std::vector<glm::vec3> pointLightPositions{
@@ -24,7 +17,8 @@ std::vector<glm::vec3> pointLightPositions{
     glm::vec3(0.0f, 0.0f, -3.0f)};
 
 float scale = 1.0;
-bool enable = true;
+bool enable = false;
+bool enable_flashlight = true;
 
 int main() {
     // glfw: initialize and configure
@@ -136,19 +130,15 @@ int main() {
                       glm::vec3{1, 1, 1}, 0});
     models.push_back({Model("resources/objects/tower/wooden_watch_tower2.obj"), glm::vec3{10, 0, 0},
                       glm::vec3{1, 1, 1}, 0});
+    models.push_back({Model("resources/objects/nanosuit/nanosuit.obj"), glm::vec3{0, 0, 0},
+                      glm::vec3{0.4, 0.4, 0.4}, 0});
 
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window)) {
-        // per-frame time logic
-        // --------------------
-        float currentFrame = static_cast<float>(glfwGetTime());
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
-
         // input
         // -----
-        processInput(window);
+        processInput(window, &scale, &enable, &enable_flashlight);
 
         // draw in wireframe
         glPolygonMode(GL_FRONT_AND_BACK, enable ? GL_LINE : GL_FILL);
@@ -168,6 +158,7 @@ int main() {
         lightingShader.setMat4("projection", projection);
         lightingShader.setMat4("view", view);
 
+        lightingShader.setBool("spotLight.enabled", enable_flashlight);
         lightingShader.setVec3("spotLight.position", camera.Position);
         lightingShader.setVec3("spotLight.direction", camera.Front);
 
