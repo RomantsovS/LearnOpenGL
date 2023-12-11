@@ -78,6 +78,7 @@ set(4.advanced_opengl
     8.advanced_glsl_ubo
     9.1.geometry_shader_houses
     9.2.geometry_shader_exploding
+    9.3.geometry_shader_normals
 )
 
 function(create_project_from_sources chapter demo)
