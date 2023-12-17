@@ -79,6 +79,9 @@ set(4.advanced_opengl
     9.1.geometry_shader_houses
     9.2.geometry_shader_exploding
     9.3.geometry_shader_normals
+    10.1.instancing_quads
+    10.2.asteroids
+    10.3.asteroids_instanced
 )
 
 function(create_project_from_sources chapter demo)
