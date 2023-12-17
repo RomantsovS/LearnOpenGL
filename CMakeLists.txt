@@ -82,6 +82,7 @@ set(4.advanced_opengl
     10.1.instancing_quads
     10.2.asteroids
     10.3.asteroids_instanced
+    11.1.anti_aliasing_msaa
 )
 
 function(create_project_from_sources chapter demo)
