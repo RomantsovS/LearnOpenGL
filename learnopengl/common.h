@@ -64,7 +64,7 @@ void processInput(GLFWwindow* window, float* scale, bool* enable1, bool* enable2
 
     static auto last_switch2 = currentFrame;
     if (enable2 && glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-        if (currentFrame - last_switch2 > 0.5f) {
+        if (currentFrame - last_switch2 > 0.1f) {
             last_switch2 = currentFrame;
             *enable2 = !*enable2;
         }

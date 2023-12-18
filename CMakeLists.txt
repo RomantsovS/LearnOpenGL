@@ -40,6 +40,7 @@ set(CHAPTERS
     2.lighting
     3.model_loading
     4.advanced_opengl
+    5.advanced_lighting
 )
 
 set(1.getting_started
@@ -83,6 +84,10 @@ set(4.advanced_opengl
     10.2.asteroids
     10.3.asteroids_instanced
     11.1.anti_aliasing_msaa
+)
+
+set(5.advanced_lighting
+    1.advanced_lighting
 )
 
 function(create_project_from_sources chapter demo)
