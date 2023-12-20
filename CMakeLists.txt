@@ -89,6 +89,7 @@ set(4.advanced_opengl
 set(5.advanced_lighting
     1.advanced_lighting
     2.gamma_correction
+    3.1.2.shadow_mapping_base
 )
 
 function(create_project_from_sources chapter demo)
