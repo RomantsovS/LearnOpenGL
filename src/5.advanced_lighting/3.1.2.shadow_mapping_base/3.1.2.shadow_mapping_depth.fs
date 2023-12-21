@@ -8,4 +8,5 @@ uniform sampler2D diffuseTexture;
 void main()
 {             
     gl_FragColor = texture(diffuseTexture, TexCoords);
+    gl_FragDepth = gl_FragCoord.z;
 }
