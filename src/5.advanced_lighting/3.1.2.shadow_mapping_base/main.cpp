@@ -70,6 +70,9 @@ int main() {
     Shader debugDepthQuad(
         "src/5.advanced_lighting/3.1.2.shadow_mapping_base/3.1.2.debug_quad.vs",
         "src/5.advanced_lighting/3.1.2.shadow_mapping_base/3.1.2.debug_quad_depth.fs");
+    Shader debugColorQuad(
+        "src/5.advanced_lighting/3.1.2.shadow_mapping_base/3.1.2.debug_quad.vs",
+        "src/5.advanced_lighting/3.1.2.shadow_mapping_base/3.1.2.debug_quad_color.fs");
     Shader light_cube("src/5.advanced_lighting/3.1.2.shadow_mapping_base/6.light_cube.vs",
                       "src/5.advanced_lighting/3.1.2.shadow_mapping_base/6.light_cube.fs");
 
@@ -146,6 +149,8 @@ int main() {
     simpleDepthShader.setInt("diffuseTexture", 0);
     debugDepthQuad.use();
     debugDepthQuad.setInt("depthMap", 0);
+    debugColorQuad.use();
+    debugColorQuad.setInt("depthMap", 0);
 
     // lighting info
     // -------------
@@ -181,8 +186,8 @@ int main() {
         glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
         // glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-        glDrawBuffer(GL_DEPTH_ATTACHMENT);
-        glClearDepth(0.99f);
+        // glDrawBuffer(GL_DEPTH_ATTACHMENT);
+        glClearDepth(1.0f);
         glClearColor(0.4f, 0.4f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
@@ -233,8 +238,16 @@ int main() {
         debugDepthQuad.use();
         debugDepthQuad.setFloat("near_plane", near_plane);
         debugDepthQuad.setFloat("far_plane", far_plane);
+        model = glm::mat4(1.0f);
+        debugDepthQuad.setMat4("model", model);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, depthMap);
+        renderQuad();
+        debugColorQuad.use();
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+        model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0));
+        debugColorQuad.setMat4("model", model);
         renderQuad();
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
