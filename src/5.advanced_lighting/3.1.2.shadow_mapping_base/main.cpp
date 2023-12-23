@@ -59,6 +59,7 @@ int main() {
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
 
     // build and compile shaders
     // -------------------------
@@ -128,8 +129,10 @@ int main() {
                  GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    float borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
+    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
     // attach depth texture as FBO's depth buffer
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -164,7 +167,7 @@ int main() {
         // --------------------------------------------------------------
         glm::mat4 lightProjection, lightView;
         glm::mat4 lightSpaceMatrix;
-        float near_plane = 1.0f, far_plane = 70.5f;
+        float near_plane = 1.0f, far_plane = 7.5f;
         lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
         lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
         lightSpaceMatrix = lightProjection * lightView;
@@ -178,6 +181,7 @@ int main() {
         glClearColor(0.4f, 0.4f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
+        glCullFace(GL_FRONT);
         glDepthFunc(GL_LEQUAL);
         glDepthMask(true);
         glDepthRange(0.0f, 1.0f);
@@ -185,6 +189,7 @@ int main() {
         glBindTexture(GL_TEXTURE_2D, woodTexture);
         renderScene(simpleDepthShader);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glDisable(GL_CULL_FACE);
 
         // reset viewport
         glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
