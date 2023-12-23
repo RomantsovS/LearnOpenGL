@@ -132,10 +132,6 @@ int main() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     // attach depth texture as FBO's depth buffer
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-    // GLenum DrawBuffers[1] = {GL_DEPTH_ATTACHMENT};
-    // glDrawBuffers(1, DrawBuffers);
-    // glDrawBuffer(GL_DEPTH_ATTACHMENT);
-    // glReadBuffer(GL_NONE);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         throw std::runtime_error("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -145,8 +141,6 @@ int main() {
     shader.use();
     shader.setInt("diffuseTexture", 0);
     shader.setInt("shadowMap", 1);
-    simpleDepthShader.use();
-    simpleDepthShader.setInt("diffuseTexture", 0);
     debugDepthQuad.use();
     debugDepthQuad.setInt("depthMap", 0);
     debugColorQuad.use();
@@ -186,7 +180,6 @@ int main() {
         glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
         // glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-        // glDrawBuffer(GL_DEPTH_ATTACHMENT);
         glClearDepth(1.0f);
         glClearColor(0.4f, 0.4f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
