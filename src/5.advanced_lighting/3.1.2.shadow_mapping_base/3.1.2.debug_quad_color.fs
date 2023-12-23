@@ -4,9 +4,11 @@ out vec4 FragColor;
 in vec2 TexCoords;
 
 uniform sampler2D depthMap;
+uniform bool enable;
 
 void main()
 {
-    FragColor = vec4(texture(depthMap, TexCoords).rgb, 0.0);
-    discard;
+    FragColor = texture(depthMap, TexCoords);
+    if(enable)
+        discard;
 }
