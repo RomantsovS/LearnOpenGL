@@ -158,12 +158,13 @@ int main() {
         processInput(window, &scale, &enable);
 
         lightPos.x = sin(glfwGetTime()) * 2.0f;
+        lightPos.y = abs(cos(glfwGetTime())) * 2.0f;
         lightPos.z = cos(glfwGetTime()) * 2.0f;
         // 1. render depth of scene to texture (from light's perspective)
         // --------------------------------------------------------------
         glm::mat4 lightProjection, lightView;
         glm::mat4 lightSpaceMatrix;
-        float near_plane = 1.0f, far_plane = 7.5f;
+        float near_plane = 1.0f, far_plane = 70.5f;
         lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
         lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
         lightSpaceMatrix = lightProjection * lightView;
