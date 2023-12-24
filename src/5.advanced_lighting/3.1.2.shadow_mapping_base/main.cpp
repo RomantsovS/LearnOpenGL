@@ -231,6 +231,7 @@ int main() {
         debugDepthQuad.setFloat("far_plane", far_plane);
         model = glm::mat4(1.0f);
         debugDepthQuad.setMat4("model", model);
+        debugDepthQuad.setBool("enable", enable);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, depthMap);
         renderQuad();
