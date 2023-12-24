@@ -71,7 +71,8 @@ void main()
     // phase 3: Spot light
     result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    
     
-    FragColor = vec4(result, 1.0);
+    // FragColor = vec4(result, 1.0);
+    FragColor = texture(texture_specular1, TexCoords);
 }
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
@@ -108,7 +109,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     ambient  *= attenuation;
     diffuse  *= attenuation;
     specular *= attenuation;
-    return (ambient + diffuse + specular);
+    return (ambient + diffuse);// + specular);
 }
 
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {

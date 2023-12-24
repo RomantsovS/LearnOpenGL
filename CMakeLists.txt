@@ -33,7 +33,10 @@ target_include_directories(GLAD PRIVATE ${CMAKE_SOURCE_DIR}/third_party/include)
 
 set(Common_include ${CMAKE_SOURCE_DIR}/third_party/include ${CMAKE_SOURCE_DIR})
 
-set(LIBS ${LIBS} GLAD)
+add_library(common_lib "src/mesh.cpp" "src/model.cpp")
+target_include_directories(common_lib PRIVATE ${Common_include})
+
+set(LIBS ${LIBS} GLAD common_lib)
 
 set(CHAPTERS
     1.getting_started

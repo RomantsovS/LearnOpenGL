@@ -5,12 +5,15 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <map>
 #include <string>
 #include <vector>
 
 #include "shader.h"
 
 #define MAX_BONE_INFLUENCE 4
+
+unsigned int TextureFromFile(const char *path, const std::string &directory);
 
 struct Vertex {
     // position
@@ -40,12 +43,14 @@ class Mesh {
     // mesh Data
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<Texture> textures;
+    std::multimap<aiTextureType, Texture> textures;
     unsigned int VAO;
+
+    static std::map<aiTextureType, Texture> dummy_textures;
 
     // constructor
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices,
-         std::vector<Texture> textures) {
+         std::multimap<aiTextureType, Texture> textures) {
         this->vertices = vertices;
         this->indices = indices;
         this->textures = textures;
@@ -53,6 +58,10 @@ class Mesh {
         // now that we have all the required data, set the vertex buffers and its attribute
         // pointers.
         setupMesh();
+
+        if (Mesh::dummy_textures.empty()) {
+            loadDummyTextures();
+        }
     }
 
     // render the mesh
@@ -62,11 +71,13 @@ class Mesh {
         unsigned int specularNr = 1;
         unsigned int normalNr = 1;
         unsigned int heightNr = 1;
-        for (unsigned int i = 0; i < textures.size(); i++) {
+        size_t i = 0;
+
+        auto bind_texture = [&](const std::string &type, unsigned id) {
             glActiveTexture(GL_TEXTURE0 + i);  // active proper texture unit before binding
             // retrieve texture number (the N in diffuse_textureN)
             std::string number;
-            std::string name = textures[i].type;
+            std::string name = type;
             if (name == "texture_diffuse")
                 number = std::to_string(diffuseNr++);
             else if (name == "texture_specular")
@@ -79,7 +90,18 @@ class Mesh {
             // now set the sampler to the correct texture unit
             shader.setInt((name + number).c_str(), i);
             // and finally bind the texture
-            glBindTexture(GL_TEXTURE_2D, textures[i].id);
+            glBindTexture(GL_TEXTURE_2D, id);
+        };
+
+        for (const auto &dummy_texture : Mesh::dummy_textures) {
+            auto range = textures.equal_range(dummy_texture.first);
+            for (auto iter = range.first; iter != range.second; ++iter) {
+                bind_texture(iter->second.type, iter->second.id);
+                ++i;
+            }
+            if (range.first == range.second) {
+                bind_texture(dummy_texture.second.type, dummy_texture.second.id);
+            }
         }
 
         // draw mesh
@@ -94,6 +116,16 @@ class Mesh {
    private:
     // render data
     unsigned int VBO, EBO;
+
+    static void loadDummyTextures() {
+        for (auto type : {aiTextureType_DIFFUSE, aiTextureType_SPECULAR}) {
+            Texture texture;
+            texture.id = TextureFromFile("dummy.png", "resources/textures");
+            // texture.type = typeName;
+            texture.path = "dummy.png";
+            Mesh::dummy_textures[type] = texture;
+        }
+    }
 
     // initializes all the buffer objects/arrays
     void setupMesh() {

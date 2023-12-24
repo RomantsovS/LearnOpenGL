@@ -11,11 +11,6 @@ const unsigned int SCR_HEIGHT = 600;
 // camera
 Camera camera(glm::vec3(0.0f, 5.0f, 3.0f));
 
-// lighting
-std::vector<glm::vec3> pointLightPositions{
-    glm::vec3(0.7f, 0.2f, 2.0f), glm::vec3(2.3f, -3.3f, -4.0f), glm::vec3(-4.0f, 2.0f, -12.0f),
-    glm::vec3(0.0f, 0.0f, -3.0f)};
-
 float scale = 1.0;
 bool enable = false;
 bool enable_flashlight = true;
@@ -125,13 +120,18 @@ int main() {
     // -----------
     std::vector<RenderModel> models;
     models.push_back({Model("resources/objects/cottage/cottage_obj.obj"), glm::vec3{0, 0, -10},
-                      glm::vec3{0.5f, 0.5f, 0.5f}, 0});
+                      glm::vec3{0.4f}, 0});
     models.push_back({Model("resources/objects/cottage2/Cottage_FREE.obj"), glm::vec3{0, 0, 10},
-                      glm::vec3{1, 1, 1}, 0});
+                      glm::vec3{1.2}, 0});
     models.push_back({Model("resources/objects/tower/wooden_watch_tower2.obj"), glm::vec3{10, 0, 0},
-                      glm::vec3{1, 1, 1}, 0});
-    models.push_back({Model("resources/objects/nanosuit/nanosuit.obj"), glm::vec3{0, 0, 0},
-                      glm::vec3{0.4, 0.4, 0.4}, 0});
+                      glm::vec3{1}, 0});
+    models.push_back(
+        {Model("resources/objects/nanosuit/nanosuit.obj"), glm::vec3{0, 0, 0}, glm::vec3{0.18}, 0});
+
+    // lighting
+    std::vector<glm::vec3> pointLightPositions{
+        glm::vec3(0.0f, 0.2f, 0.0f), glm::vec3(2.0f, 1.0f, -4.0f), glm::vec3(4.0f, 2.0f, 4.0f),
+        glm::vec3(0.0f, 3.0f, -3.0f)};
 
     // render loop
     // -----------
@@ -147,6 +147,8 @@ int main() {
         // ------
         glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glEnable(GL_CULL_FACE);
 
         // don't forget to enable shader before setting uniforms
         lightingShader.use();
@@ -185,18 +187,22 @@ int main() {
         lightingShader.setVec3("dirLight.specular", glm::vec3(0.8));
 
         std::vector<glm::vec3> lightColors(pointLightPositions.size());
+        lightColors.at(0) = glm::vec3{1.0, 1.0, 0.0};
+        lightColors.at(1) = glm::vec3{1.0, 0.0, 0.0};
+        lightColors.at(2) = glm::vec3{0.0, 0.0, 1.0};
+        lightColors.at(3) = glm::vec3{1.0};
 
         for (size_t i = 0; i < lightColors.size(); ++i) {
-            lightColors[i].x = sin(glfwGetTime() * (1) * 0.2 + 20 * i);
-            lightColors[i].y = cos(glfwGetTime() * (1) + 45 * i);
-            lightColors[i].z = sin(glfwGetTime() * (1) * 0.5 + 30 * i);
+            // lightColors[i].x = sin(glfwGetTime() * (1) * 0.2 + 20 * i);
+            // lightColors[i].y = cos(glfwGetTime() * (1) + 45 * i);
+            // lightColors[i].z = sin(glfwGetTime() * (1) * 0.5 + 30 * i);
 
             glm::vec3 diffuseColor = lightColors[i] * glm::vec3(0.5f);
             glm::vec3 ambientColor = diffuseColor * glm::vec3(0.1f);
 
             pointLightPositions[i].x = std::sin((float)glfwGetTime() * (1) + 45 * i) * (i + 8);
-            pointLightPositions[i].y = (1 + std::cos((float)glfwGetTime() / (1))) * (i + 5);
-            pointLightPositions[i].z = std::cos((float)glfwGetTime() * (1) + 90 * i) * (i + 15);
+            // pointLightPositions[i].y = (1 + std::cos((float)glfwGetTime() / (1))) * (i + 5);
+            // pointLightPositions[i].z = std::cos((float)glfwGetTime() * (1) + 90 * i) * (i + 15);
 
             std::string name = "pointLights[";
             name.append(std::to_string(i)).append("].");
