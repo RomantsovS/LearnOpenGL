@@ -148,7 +148,7 @@ int main() {
         glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glEnable(GL_CULL_FACE);
+        // glEnable(GL_CULL_FACE);
 
         // don't forget to enable shader before setting uniforms
         lightingShader.use();
@@ -170,8 +170,7 @@ int main() {
         lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
         lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(17.5f)));
 
-        glm::vec3 lightColor(1.0f, 1.0f, 0.0f);
-
+        glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
         glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
         glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
 
@@ -198,9 +197,9 @@ int main() {
             // lightColors[i].z = sin(glfwGetTime() * (1) * 0.5 + 30 * i);
 
             glm::vec3 diffuseColor = lightColors[i] * glm::vec3(0.5f);
-            glm::vec3 ambientColor = diffuseColor * glm::vec3(0.1f);
+            glm::vec3 ambientColor = lightColors[i] * glm::vec3(0.1f);
 
-            pointLightPositions[i].x = std::sin((float)glfwGetTime() * (1) + 45 * i) * (i + 8);
+            pointLightPositions[i].x = std::sin((float)glfwGetTime() / 2 + 45 * i) * 5;
             // pointLightPositions[i].y = (1 + std::cos((float)glfwGetTime() / (1))) * (i + 5);
             // pointLightPositions[i].z = std::cos((float)glfwGetTime() * (1) + 90 * i) * (i + 15);
 
