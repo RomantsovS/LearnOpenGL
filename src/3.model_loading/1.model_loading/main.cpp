@@ -15,6 +15,8 @@ float scale = 1.0;
 bool enable = false;
 bool enable_flashlight = true;
 
+void DrawSkybox(Shader& shader);
+
 int main() {
     // glfw: initialize and configure
     // ------------------------------
@@ -64,6 +66,8 @@ int main() {
 
     Shader lightCubeShader("src/3.model_loading/1.model_loading/6.light_cube.vs",
                            "src/3.model_loading/1.model_loading/6.light_cube.fs");
+    Shader skyboxShader("src/3.model_loading/1.model_loading/6.2.skybox.vs",
+                        "src/3.model_loading/1.model_loading/6.2.skybox.fs");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -132,6 +136,15 @@ int main() {
     std::vector<glm::vec3> pointLightPositions{
         glm::vec3(0.0f, 0.2f, 0.0f), glm::vec3(2.0f, 1.0f, -4.0f), glm::vec3(4.0f, 2.0f, 4.0f),
         glm::vec3(0.0f, 3.0f, -3.0f)};
+
+    std::vector<std::string> faces{
+        "resources/textures/skybox/right.jpg", "resources/textures/skybox/left.jpg",
+        "resources/textures/skybox/top.jpg",   "resources/textures/skybox/bottom.jpg",
+        "resources/textures/skybox/front.jpg", "resources/textures/skybox/back.jpg"};
+    unsigned int cubemapTexture = loadCubemap(faces);
+
+    skyboxShader.use();
+    skyboxShader.setInt("skybox", 0);
 
     // render loop
     // -----------
@@ -242,6 +255,16 @@ int main() {
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
+        glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal
+                                 // to depth buffer's content
+        skyboxShader.use();
+        skyboxShader.setMat4("view", glm::mat4(glm::mat3(view)));
+        skyboxShader.setMat4("projection", projection);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+        DrawSkybox(skyboxShader);
+        glDepthFunc(GL_LESS);  // set depth function back to default
+
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
@@ -252,4 +275,41 @@ int main() {
     // ------------------------------------------------------------------
     glfwTerminate();
     return 0;
+}
+
+void DrawSkybox(Shader& shader) {
+    float skyboxVertices[] = {// positions
+                              -1.0f, 1.0f,  -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  -1.0f, -1.0f,
+                              1.0f,  -1.0f, -1.0f, 1.0f,  1.0f,  -1.0f, -1.0f, 1.0f,  -1.0f,
+
+                              -1.0f, -1.0f, 1.0f,  -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  -1.0f,
+                              -1.0f, 1.0f,  -1.0f, -1.0f, 1.0f,  1.0f,  -1.0f, -1.0f, 1.0f,
+
+                              1.0f,  -1.0f, -1.0f, 1.0f,  -1.0f, 1.0f,  1.0f,  1.0f,  1.0f,
+                              1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  -1.0f, 1.0f,  -1.0f, -1.0f,
+
+                              -1.0f, -1.0f, 1.0f,  -1.0f, 1.0f,  1.0f,  1.0f,  1.0f,  1.0f,
+                              1.0f,  1.0f,  1.0f,  1.0f,  -1.0f, 1.0f,  -1.0f, -1.0f, 1.0f,
+
+                              -1.0f, 1.0f,  -1.0f, 1.0f,  1.0f,  -1.0f, 1.0f,  1.0f,  1.0f,
+                              1.0f,  1.0f,  1.0f,  -1.0f, 1.0f,  1.0f,  -1.0f, 1.0f,  -1.0f,
+
+                              -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  1.0f,  -1.0f, -1.0f,
+                              1.0f,  -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  1.0f,  -1.0f, 1.0f};
+    // skybox VAO
+    static unsigned int skyboxVAO = 0, skyboxVBO = 0;
+    if (skyboxVAO == 0) {
+        glGenVertexArrays(1, &skyboxVAO);
+        glGenBuffers(1, &skyboxVBO);
+        glBindVertexArray(skyboxVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    }
+
+    // skybox cube
+    glBindVertexArray(skyboxVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glBindVertexArray(0);
 }
