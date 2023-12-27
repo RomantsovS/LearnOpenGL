@@ -146,6 +146,9 @@ int main() {
     skyboxShader.use();
     skyboxShader.setInt("skybox", 0);
 
+    lightingShader.use();
+    lightingShader.setInt("skybox", 5);
+
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window)) {
@@ -230,6 +233,9 @@ int main() {
             lightingShader.setVec3(name + "specular", lightColors[i]);
         }
 
+        glActiveTexture(GL_TEXTURE5);
+        // glBindTexture(GL_TEXTURE_2D, cubeTexture);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
         // render the loaded model
         for (const auto& mod : models) {
             glm::mat4 model = glm::mat4(1.0f);

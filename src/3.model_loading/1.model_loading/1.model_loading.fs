@@ -5,6 +5,7 @@ uniform vec3 viewPos;
 
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
+uniform samplerCube skybox;
 
 struct DirLight {
     vec3 direction;
@@ -56,6 +57,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 in vec3 Normal;
 in vec3 FragPos;
 in vec2 TexCoords;
+in vec3 Position;
 
 void main()
 {
@@ -71,6 +73,10 @@ void main()
     // phase 3: Spot light
     result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    
     
+    vec3 I = normalize(Position - viewPos);
+    vec3 R = reflect(I, normalize(Normal));
+    result = result * 0.8 + texture(skybox, R).rgb * 0.2;
+
     FragColor = vec4(result, 1.0);
 }
 

@@ -132,8 +132,6 @@ int main() {
 
     // load textures
     // -------------
-    // unsigned int cubeTexture = loadTexture("resources/textures/container.jpg");
-
     std::vector<std::string> faces{
         "resources/textures/skybox/right.jpg", "resources/textures/skybox/left.jpg",
         "resources/textures/skybox/top.jpg",   "resources/textures/skybox/bottom.jpg",
@@ -175,7 +173,6 @@ int main() {
         // cubes
         glBindVertexArray(cubeVAO);
         glActiveTexture(GL_TEXTURE0);
-        // glBindTexture(GL_TEXTURE_2D, cubeTexture);
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
@@ -191,7 +188,6 @@ int main() {
         // cubes
         glBindVertexArray(cubeVAO);
         glActiveTexture(GL_TEXTURE0);
-        // glBindTexture(GL_TEXTURE_2D, cubeTexture);
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
