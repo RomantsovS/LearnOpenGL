@@ -55,8 +55,12 @@ int main() {
 
     // build and compile shaders
     // -------------------------
-    Shader shader("src/4.advanced_opengl/6.2.cubemaps_environment_mapping/6.2.cubemaps.vs",
-                  "src/4.advanced_opengl/6.2.cubemaps_environment_mapping/6.2.cubemaps.fs");
+    Shader shader_reflect(
+        "src/4.advanced_opengl/6.2.cubemaps_environment_mapping/6.2.cubemaps.vs",
+        "src/4.advanced_opengl/6.2.cubemaps_environment_mapping/6.2.cubemaps_reflect.fs");
+    Shader shader_refract(
+        "src/4.advanced_opengl/6.2.cubemaps_environment_mapping/6.2.cubemaps.vs",
+        "src/4.advanced_opengl/6.2.cubemaps_environment_mapping/6.2.cubemaps_refract.fs");
     Shader skyboxShader("src/4.advanced_opengl/6.2.cubemaps_environment_mapping/6.2.skybox.vs",
                         "src/4.advanced_opengl/6.2.cubemaps_environment_mapping/6.2.skybox.fs");
 
@@ -138,8 +142,10 @@ int main() {
 
     // shader configuration
     // --------------------
-    shader.use();
-    shader.setInt("skybox", 0);
+    shader_reflect.use();
+    shader_reflect.setInt("skybox", 0);
+    shader_refract.use();
+    shader_refract.setInt("skybox", 0);
 
     skyboxShader.use();
     skyboxShader.setInt("skybox", 0);
@@ -157,15 +163,31 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // draw scene as normal
-        shader.use();
+        shader_reflect.use();
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom),
                                                 (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        shader.setMat4("model", model);
-        shader.setMat4("view", view);
-        shader.setMat4("projection", projection);
-        shader.setVec3("cameraPos", camera.Position);
+        shader_reflect.setMat4("model", model);
+        shader_reflect.setMat4("view", view);
+        shader_reflect.setMat4("projection", projection);
+        shader_reflect.setVec3("cameraPos", camera.Position);
+        // cubes
+        glBindVertexArray(cubeVAO);
+        glActiveTexture(GL_TEXTURE0);
+        // glBindTexture(GL_TEXTURE_2D, cubeTexture);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(0);
+
+        shader_refract.use();
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, {2.0, 0.0, 0.0});
+
+        shader_refract.setMat4("model", model);
+        shader_refract.setMat4("view", view);
+        shader_refract.setMat4("projection", projection);
+        shader_refract.setVec3("cameraPos", camera.Position);
         // cubes
         glBindVertexArray(cubeVAO);
         glActiveTexture(GL_TEXTURE0);
