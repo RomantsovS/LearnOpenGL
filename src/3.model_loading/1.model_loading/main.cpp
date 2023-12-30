@@ -131,6 +131,8 @@ int main() {
                       glm::vec3{1}, 0});
     models.push_back(
         {Model("resources/objects/nanosuit/nanosuit.obj"), glm::vec3{0, 0, 0}, glm::vec3{0.18}, 0});
+    models.push_back(
+        {Model("resources/objects/seahawk/Seahawk.obj"), glm::vec3{-15, 0, 0}, glm::vec3{0.1}, 0});
 
     // lighting
     std::vector<glm::vec3> pointLightPositions{
