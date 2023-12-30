@@ -42,11 +42,13 @@ struct Material {
     float shininess = 0;
 };
 
+extern std::map<aiTextureType, std::string> ai_texture_type_to_type;
+
 class Mesh {
    public:
     // constructor
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices,
-         std::multimap<aiTextureType, Texture> textures, Material material);
+         std::multimap<std::string, Texture> textures, Material material);
 
     // render the mesh
     void Draw(Shader &shader) const;
@@ -58,24 +60,16 @@ class Mesh {
     // mesh Data
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::multimap<aiTextureType, Texture> textures;
+    std::multimap<std::string, Texture> textures;
     Material material;
     unsigned int VAO;
 
-    static std::map<aiTextureType, Texture> dummy_textures;
+    static std::map<std::string, Texture> dummy_textures;
 
     // render data
     unsigned int VBO, EBO;
 
-    static void loadDummyTextures() {
-        for (auto type : {aiTextureType_DIFFUSE, aiTextureType_SPECULAR}) {
-            Texture texture;
-            texture.id = TextureFromFile("dummy.png", "resources/textures");
-            // texture.type = typeName;
-            texture.path = "dummy.png";
-            Mesh::dummy_textures[type] = texture;
-        }
-    }
+    static void loadDummyTextures();
 
     // initializes all the buffer objects/arrays
     void setupMesh() {

@@ -18,6 +18,8 @@
 #include <string>
 #include <vector>
 
+#include "shader.h"
+
 unsigned int TextureFromFile(const char *path, const std::string &directory);
 
 class Model {
@@ -30,77 +32,39 @@ class Model {
     bool gammaCorrection;
 
     // constructor, expects a filepath to a 3D model.
-    Model(std::string const &path, bool gamma = false) : gammaCorrection(gamma) { loadModel(path); }
+    Model(std::string const &path, const std::vector<std::string> &mesh_names = {},
+          bool gamma = false)
+        : gammaCorrection(gamma) {
+        loadModel(path, mesh_names);
+    }
 
     // draws the model, and thus all its meshes
-    void Draw(Shader &shader) const {
-        for (unsigned int i = 0; i < meshes.size(); i++) meshes[i].Draw(shader);
-    }
+    void Draw(Shader &shader) const;
 
    private:
     // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in
     // the meshes vector.
-    void loadModel(std::string const &path) {
-        // read file via ASSIMP
-        Assimp::Importer importer;
-        const aiScene *scene =
-            importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals |
-                                        aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
-        // check for errors
-        if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
-            !scene->mRootNode)  // if is Not Zero
-        {
-            std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
-            throw std::runtime_error("ERROR::ASSIMP");
-            return;
-        }
-        // retrieve the directory path of the filepath
-        directory = path.substr(0, path.find_last_of('/'));
-
-        // process ASSIMP's root node recursively
-        processNode(scene->mRootNode, scene);
-
-        glm::vec3 min(0), max(0);
-        for (size_t i = 0; i < scene->mNumMeshes; ++i) {
-            const auto *mesh = scene->mMeshes[i];
-            std::cout << "mesh " << i << ": verts: " << mesh->mNumVertices << '\n';
-            for (size_t j = 0; j < mesh->mNumVertices; ++j) {
-                min.x = std::min(min.x, mesh->mVertices[j].x);
-                min.y = std::min(min.y, mesh->mVertices[j].y);
-                min.z = std::min(min.z, mesh->mVertices[j].z);
-
-                max.x = std::max(max.x, mesh->mVertices[j].x);
-                max.y = std::max(max.y, mesh->mVertices[j].y);
-                max.z = std::max(max.z, mesh->mVertices[j].z);
-            }
-        }
-        std::cout << "min: " << min.x << ' ' << min.y << ' ' << min.z << " max: " << max.x << ' '
-                  << max.y << ' ' << max.z << '\n';
-        for (size_t i = 0; i < scene->mNumMaterials; ++i) {
-            const auto *mat = scene->mMaterials[i];
-            std::cout << "material " << i << ": " << mat->GetName().C_Str() << '\n';
-        }
-        for (size_t i = 0; i < scene->mNumTextures; ++i) {
-            const auto *texture = scene->mTextures[i];
-            std::cout << "texture " << i << ": " << texture->mFilename.C_Str() << '\n';
-        }
-    }
+    void loadModel(std::string const &path, const std::vector<std::string> &mesh_names);
 
     // processes a node in a recursive fashion. Processes each individual mesh located at the node
     // and repeats this process on its children nodes (if any).
-    void processNode(aiNode *node, const aiScene *scene) {
+    void processNode(aiNode *node, const aiScene *scene,
+                     const std::vector<std::string> &mesh_names) {
         // process each mesh located at the current node
         for (unsigned int i = 0; i < node->mNumMeshes; i++) {
             // the node object only contains indices to index the actual objects in the scene.
             // the scene contains all the data, node is just to keep stuff organized (like relations
             // between nodes).
             aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-            meshes.push_back(processMesh(mesh, scene));
+            if (mesh_names.empty() || std::find(mesh_names.begin(), mesh_names.end(),
+                                                mesh->mName.C_Str()) != mesh_names.end()) {
+                meshes.push_back(processMesh(mesh, scene));
+            }
         }
         // after we've processed all of the meshes (if any) we then recursively process each of the
         // children nodes
         for (unsigned int i = 0; i < node->mNumChildren; i++) {
-            processNode(node->mChildren[i], scene);
+            processNode(node->mChildren[i], scene, mesh_names);
         }
     }
 
@@ -108,8 +72,8 @@ class Model {
 
     // checks all material textures of a given type and loads the textures if they're not loaded
     // yet. the required info is returned as a Texture struct.
-    std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type,
-                                              std::string typeName) {
+    std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type) {
+        std::string typeName = ai_texture_type_to_type.at(type);
         std::vector<Texture> textures;
         for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
             aiString str;
@@ -149,6 +113,8 @@ struct RenderModel {
     glm::vec3 pos;
     glm::vec3 scale;
     float angle;
+
+    void Draw(Shader &shader) const { model.Draw(shader); }
 };
 
 #endif

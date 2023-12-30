@@ -123,8 +123,8 @@ int main() {
     // load models
     // -----------
     std::vector<RenderModel> models;
-    models.push_back({Model("resources/objects/cottage/cottage_obj.obj"), glm::vec3{0, 0, -10},
-                      glm::vec3{0.4f}, 0});
+    models.push_back({Model("resources/objects/cottage/cottage_obj.obj", {"Cube_Cube.002"}),
+                      glm::vec3{0, 0, -10}, glm::vec3{0.4f}, 0});
     models.push_back({Model("resources/objects/cottage2/Cottage_FREE.obj"), glm::vec3{0, 0, 10},
                       glm::vec3{1.2}, 0});
     models.push_back({Model("resources/objects/tower/wooden_watch_tower2.obj"), glm::vec3{10, 0, 0},
@@ -242,7 +242,7 @@ int main() {
             model = glm::scale(model, mod.scale);
             model = glm::rotate(model, glm::radians(mod.angle), glm::vec3(0.0f, 1.0f, 0.0f));
             lightingShader.setMat4("model", model);
-            mod.model.Draw(lightingShader);
+            mod.Draw(lightingShader);
         }
 
         // also draw the lamp object

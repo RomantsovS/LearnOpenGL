@@ -1,9 +1,11 @@
 #include <learnopengl/model.h>
 
-std::map<aiTextureType, Texture> Mesh::dummy_textures;
+std::map<aiTextureType, std::string> ai_texture_type_to_type = {
+    {aiTextureType_DIFFUSE, "texture_diffuse"}, {aiTextureType_SPECULAR, "texture_specular"}};
+std::map<std::string, Texture> Mesh::dummy_textures;
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices,
-           std::multimap<aiTextureType, Texture> textures, Material material) {
+           std::multimap<std::string, Texture> textures, Material material) {
     this->vertices = vertices;
     this->indices = indices;
     this->textures = textures;
@@ -66,4 +68,14 @@ void Mesh::Draw(Shader &shader) const {
 
     // always good practice to set everything back to defaults once configured.
     glActiveTexture(GL_TEXTURE0);
+}
+
+void Mesh::loadDummyTextures() {
+    for (auto &[ai_type, type] : ai_texture_type_to_type) {
+        Texture texture;
+        texture.id = TextureFromFile("dummy.png", "resources/textures");
+        texture.type = type;
+        texture.path = "dummy.png";
+        Mesh::dummy_textures[type] = texture;
+    }
 }

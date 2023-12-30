@@ -1,10 +1,61 @@
 #include <learnopengl/model.h>
 
+void Model::Draw(Shader &shader) const {
+    for (unsigned int i = 0; i < meshes.size(); i++) {
+        meshes[i].Draw(shader);
+    }
+}
+
+void Model::loadModel(std::string const &path, const std::vector<std::string> &mesh_names) {
+    // read file via ASSIMP
+    Assimp::Importer importer;
+    const aiScene *scene =
+        importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals |
+                                    aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+    // check for errors
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)  // if is Not Zero
+    {
+        std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
+        throw std::runtime_error("ERROR::ASSIMP");
+        return;
+    }
+    // retrieve the directory path of the filepath
+    directory = path.substr(0, path.find_last_of('/'));
+
+    // process ASSIMP's root node recursively
+    processNode(scene->mRootNode, scene, mesh_names);
+
+    glm::vec3 min(0), max(0);
+    for (size_t i = 0; i < scene->mNumMeshes; ++i) {
+        const auto *mesh = scene->mMeshes[i];
+        std::cout << "mesh " << i << " name: " << mesh->mName.C_Str()
+                  << ": verts: " << mesh->mNumVertices << '\n';
+        for (size_t j = 0; j < mesh->mNumVertices; ++j) {
+            min.x = std::min(min.x, mesh->mVertices[j].x);
+            min.y = std::min(min.y, mesh->mVertices[j].y);
+            min.z = std::min(min.z, mesh->mVertices[j].z);
+
+            max.x = std::max(max.x, mesh->mVertices[j].x);
+            max.y = std::max(max.y, mesh->mVertices[j].y);
+            max.z = std::max(max.z, mesh->mVertices[j].z);
+        }
+    }
+    std::cout << "min: " << min.x << ' ' << min.y << ' ' << min.z << " max: " << max.x << ' '
+              << max.y << ' ' << max.z << '\n';
+    for (size_t i = 0; i < scene->mNumMaterials; ++i) {
+        const auto *mat = scene->mMaterials[i];
+        std::cout << "material " << i << ": " << mat->GetName().C_Str() << '\n';
+    }
+    for (size_t i = 0; i < scene->mNumTextures; ++i) {
+        const auto *texture = scene->mTextures[i];
+        std::cout << "texture " << i << ": " << texture->mFilename.C_Str() << '\n';
+    }
+}
+
 Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
     // data to fill
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::multimap<aiTextureType, Texture> textures;
 
     // walk through each of the mesh's vertices
     for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
@@ -65,17 +116,13 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
     // specular: texture_specularN
     // normal: texture_normalN
 
-    // 1. diffuse maps
-    std::vector<Texture> diffuseMaps =
-        loadMaterialTextures(ai_material, aiTextureType_DIFFUSE, "texture_diffuse");
-    for (auto &texture : diffuseMaps) {
-        textures.insert({aiTextureType_DIFFUSE, texture});
-    }
-    // 2. specular maps
-    std::vector<Texture> specularMaps =
-        loadMaterialTextures(ai_material, aiTextureType_SPECULAR, "texture_specular");
-    for (auto &texture : specularMaps) {
-        textures.insert({aiTextureType_SPECULAR, texture});
+    std::multimap<std::string, Texture> textures;
+
+    for (auto &[ai_type, type] : ai_texture_type_to_type) {
+        std::vector<Texture> maps = loadMaterialTextures(ai_material, ai_type);
+        for (auto &texture : maps) {
+            textures.insert({type, texture});
+        }
     }
     // 3. normal maps
     // std::vector<Texture> normalMaps =
@@ -89,6 +136,9 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
     Material material;
     if (AI_SUCCESS != ai_material->Get(AI_MATKEY_SHININESS, material.shininess)) {
         throw std::runtime_error("fail getting texture from material");
+    }
+    if (material.shininess <= 0) {
+        material.shininess = 1;
     }
 
     // return a mesh object created from the extracted mesh data
