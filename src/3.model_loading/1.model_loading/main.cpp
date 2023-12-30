@@ -234,7 +234,6 @@ int main() {
         }
 
         glActiveTexture(GL_TEXTURE5);
-        // glBindTexture(GL_TEXTURE_2D, cubeTexture);
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
         // render the loaded model
         for (const auto& mod : models) {

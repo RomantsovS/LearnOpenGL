@@ -111,7 +111,7 @@ int main() {
     // organized fashion, but for learning purposes this will do.
     // -----------------------------------------------------------------------------------------------------------------------------------
     for (unsigned int i = 0; i < rock.meshes.size(); i++) {
-        unsigned int VAO = rock.meshes[i].VAO;
+        unsigned int VAO = rock.meshes[i].getVAO();
         glBindVertexArray(VAO);
         // set attribute pointers for matrix (4 times vec4)
         glEnableVertexAttribArray(3);
@@ -173,9 +173,9 @@ int main() {
             rock.textures_loaded[0].id);  // note: we also made the textures_loaded vector public
                                           // (instead of private) from the model class.
         for (unsigned int i = 0; i < rock.meshes.size(); i++) {
-            glBindVertexArray(rock.meshes[i].VAO);
+            glBindVertexArray(rock.meshes[i].getVAO());
             glDrawElementsInstanced(GL_TRIANGLES,
-                                    static_cast<unsigned int>(rock.meshes[i].indices.size()),
+                                    static_cast<unsigned int>(rock.meshes[i].getindices().size()),
                                     GL_UNSIGNED_INT, 0, amount);
             glBindVertexArray(0);
         }
