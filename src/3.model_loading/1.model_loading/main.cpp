@@ -58,6 +58,8 @@ int main() {
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
+    // glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // build and compile shaders
     // -------------------------
@@ -132,7 +134,9 @@ int main() {
     models.push_back(
         {Model("resources/objects/nanosuit/nanosuit.obj"), glm::vec3{0, 0, 0}, glm::vec3{0.18}, 0});
     models.push_back(
-        {Model("resources/objects/seahawk/Seahawk.obj"), glm::vec3{-15, 0, 0}, glm::vec3{0.1}, 0});
+        {Model("resources/objects/seahawk/Seahawk.obj"), glm::vec3{-15, 0, -5}, glm::vec3{0.1}, 0});
+    models.push_back(
+        {Model("resources/objects/tree/Tree.obj"), glm::vec3{-5, 0, 0}, glm::vec3{1}, 0});
 
     // lighting
     std::vector<glm::vec3> pointLightPositions{

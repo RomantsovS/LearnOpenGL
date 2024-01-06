@@ -24,32 +24,6 @@ void Model::loadModel(std::string const &path, const std::vector<std::string> &m
 
     // process ASSIMP's root node recursively
     processNode(scene->mRootNode, scene, mesh_names);
-
-    glm::vec3 min(0), max(0);
-    for (size_t i = 0; i < scene->mNumMeshes; ++i) {
-        const auto *mesh = scene->mMeshes[i];
-        std::cout << "mesh " << i << " name: " << mesh->mName.C_Str()
-                  << ": verts: " << mesh->mNumVertices << '\n';
-        for (size_t j = 0; j < mesh->mNumVertices; ++j) {
-            min.x = std::min(min.x, mesh->mVertices[j].x);
-            min.y = std::min(min.y, mesh->mVertices[j].y);
-            min.z = std::min(min.z, mesh->mVertices[j].z);
-
-            max.x = std::max(max.x, mesh->mVertices[j].x);
-            max.y = std::max(max.y, mesh->mVertices[j].y);
-            max.z = std::max(max.z, mesh->mVertices[j].z);
-        }
-    }
-    std::cout << "min: " << min.x << ' ' << min.y << ' ' << min.z << " max: " << max.x << ' '
-              << max.y << ' ' << max.z << '\n';
-    for (size_t i = 0; i < scene->mNumMaterials; ++i) {
-        const auto *mat = scene->mMaterials[i];
-        std::cout << "material " << i << ": " << mat->GetName().C_Str() << '\n';
-    }
-    for (size_t i = 0; i < scene->mNumTextures; ++i) {
-        const auto *texture = scene->mTextures[i];
-        std::cout << "texture " << i << ": " << texture->mFilename.C_Str() << '\n';
-    }
 }
 
 Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
@@ -134,26 +108,61 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
     // textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
     Material material;
+    aiColor3D color(0.f, 0.f, 0.f);
+    if (AI_SUCCESS != ai_material->Get(AI_MATKEY_COLOR_DIFFUSE, color)) {
+        throw std::runtime_error("fail getting AI_MATKEY_COLOR_DIFFUSE");
+    }
+    material.color_diffuse.r = color.r;
+    material.color_diffuse.g = color.g;
+    material.color_diffuse.b = color.b;
+    if (AI_SUCCESS != ai_material->Get(AI_MATKEY_COLOR_AMBIENT, color)) {
+        throw std::runtime_error("fail getting AI_MATKEY_COLOR_AMBIENT");
+    }
+    material.color_ambient.r = color.r;
+    material.color_ambient.g = color.g;
+    material.color_ambient.b = color.b;
+    if (AI_SUCCESS != ai_material->Get(AI_MATKEY_COLOR_SPECULAR, color)) {
+        throw std::runtime_error("fail getting AI_MATKEY_COLOR_SPECULAR");
+    }
+    material.color_specular.r = color.r;
+    material.color_specular.g = color.g;
+    material.color_specular.b = color.b;
     if (AI_SUCCESS != ai_material->Get(AI_MATKEY_SHININESS, material.shininess)) {
-        throw std::runtime_error("fail getting texture from material");
+        throw std::runtime_error("fail getting AI_MATKEY_SHININESS");
     }
     if (material.shininess <= 0) {
         material.shininess = 1;
     }
 
+    std::cout << "mesh: " << mesh->mName.C_Str() << ": verts: " << mesh->mNumVertices << '\n';
+    glm::vec3 min(0), max(0);
+    for (size_t j = 0; j < mesh->mNumVertices; ++j) {
+        min.x = std::min(min.x, mesh->mVertices[j].x);
+        min.y = std::min(min.y, mesh->mVertices[j].y);
+        min.z = std::min(min.z, mesh->mVertices[j].z);
+
+        max.x = std::max(max.x, mesh->mVertices[j].x);
+        max.y = std::max(max.y, mesh->mVertices[j].y);
+        max.z = std::max(max.z, mesh->mVertices[j].z);
+    }
+    std::cout << "min: " << min.x << ' ' << min.y << ' ' << min.z << " max: " << max.x << ' '
+              << max.y << ' ' << max.z << '\n';
+
+    std::cout << "material " << mesh->mMaterialIndex << ": " << ai_material->GetName().C_Str()
+              << '\n';
+
     // return a mesh object created from the extracted mesh data
     return Mesh(vertices, indices, textures, material);
 }
 
-unsigned int TextureFromFile(const char *path, const std::string &directory) {
-    std::string filename(path);
-    filename = directory + '/' + filename;
+unsigned int TextureFromFile(std::string_view filename, const std::string &directory) {
+    auto path = (directory + '/').append(filename);
 
     unsigned int textureID;
     glGenTextures(1, &textureID);
 
     int width, height, nrComponents;
-    unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+    unsigned char *data = stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
     if (data) {
         GLenum format;
         if (nrComponents == 1)

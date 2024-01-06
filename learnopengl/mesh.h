@@ -13,8 +13,6 @@
 
 #define MAX_BONE_INFLUENCE 4
 
-unsigned int TextureFromFile(const char *path, const std::string &directory);
-
 struct Vertex {
     // position
     glm::vec3 Position;
@@ -39,6 +37,9 @@ struct Texture {
 };
 
 struct Material {
+    glm::vec3 color_ambient;
+    glm::vec3 color_diffuse;
+    glm::vec3 color_specular;
     float shininess = 0;
 };
 
@@ -123,4 +124,7 @@ class Mesh {
         glBindVertexArray(0);
     }
 };
+
+unsigned int TextureFromFile(std::string_view filename, const std::string &directory);
+
 #endif

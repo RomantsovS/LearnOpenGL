@@ -16,11 +16,10 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "shader.h"
-
-unsigned int TextureFromFile(const char *path, const std::string &directory);
 
 class Model {
    public:

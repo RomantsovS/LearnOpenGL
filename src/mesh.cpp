@@ -1,4 +1,5 @@
-#include <learnopengl/model.h>
+#include <assimp/scene.h>
+#include <learnopengl/mesh.h>
 
 std::map<aiTextureType, std::string> ai_texture_type_to_type = {
     {aiTextureType_DIFFUSE, "texture_diffuse"}, {aiTextureType_SPECULAR, "texture_specular"}};
@@ -46,19 +47,28 @@ void Mesh::Draw(Shader &shader) const {
         shader.setInt(("material." + name + number).c_str(), i);
         // and finally bind the texture
         glBindTexture(GL_TEXTURE_2D, id);
+
+        ++i;
     };
 
     for (const auto &dummy_texture : Mesh::dummy_textures) {
         auto range = textures.equal_range(dummy_texture.first);
         for (auto iter = range.first; iter != range.second; ++iter) {
             bind_texture(iter->second.type, iter->second.id);
-            ++i;
         }
         if (range.first == range.second) {
             bind_texture(dummy_texture.second.type, dummy_texture.second.id);
         }
     }
 
+    if (material.color_ambient == glm::vec3(0.0) && material.color_diffuse == glm::vec3(0.0)) {
+        shader.setVec3("material.color_ambient", glm::vec3(1.0));
+        shader.setVec3("material.color_diffuse", glm::vec3(1.0));
+    } else {
+        shader.setVec3("material.color_ambient", material.color_ambient);
+        shader.setVec3("material.color_diffuse", material.color_diffuse);
+    }
+    shader.setVec3("material.color_specular", material.color_specular);
     shader.setFloat("material.shininess", material.shininess);
 
     // draw mesh
@@ -71,11 +81,14 @@ void Mesh::Draw(Shader &shader) const {
 }
 
 void Mesh::loadDummyTextures() {
-    for (auto &[ai_type, type] : ai_texture_type_to_type) {
+    std::unordered_map<aiTextureType, std::string> dummy_textures{
+        {aiTextureType_DIFFUSE, "dummy_diffuse.png"},
+        {aiTextureType_SPECULAR, "dummy_specular.png"}};
+    for (auto &[ai_type, name] : dummy_textures) {
         Texture texture;
-        texture.id = TextureFromFile("dummy.png", "resources/textures");
-        texture.type = type;
-        texture.path = "dummy.png";
-        Mesh::dummy_textures[type] = texture;
+        texture.id = TextureFromFile(name, "resources/textures");
+        texture.type = ai_texture_type_to_type[ai_type];
+        texture.path = name;
+        Mesh::dummy_textures[texture.type] = texture;
     }
 }
