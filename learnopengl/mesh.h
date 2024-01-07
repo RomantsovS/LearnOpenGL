@@ -57,6 +57,9 @@ class Mesh {
     unsigned int getVAO() const { return VAO; }
     const std::vector<unsigned int> &getindices() const { return indices; }
 
+    static std::map<std::string, Texture> dummy_textures;
+    static void loadDummyTextures();
+
    private:
     // mesh Data
     std::vector<Vertex> vertices;
@@ -65,12 +68,8 @@ class Mesh {
     Material material;
     unsigned int VAO;
 
-    static std::map<std::string, Texture> dummy_textures;
-
     // render data
     unsigned int VBO, EBO;
-
-    static void loadDummyTextures();
 
     // initializes all the buffer objects/arrays
     void setupMesh() {

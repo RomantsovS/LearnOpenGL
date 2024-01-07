@@ -15,10 +15,6 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices,
     // now that we have all the required data, set the vertex buffers and its attribute
     // pointers.
     setupMesh();
-
-    if (Mesh::dummy_textures.empty()) {
-        loadDummyTextures();
-    }
 }
 
 void Mesh::Draw(Shader &shader) const {
