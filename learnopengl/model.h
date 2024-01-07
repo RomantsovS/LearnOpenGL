@@ -19,8 +19,6 @@
 #include <string_view>
 #include <vector>
 
-#include "shader.h"
-
 class Model {
    public:
     // model data

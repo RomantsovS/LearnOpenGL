@@ -33,7 +33,7 @@ target_include_directories(GLAD PRIVATE ${CMAKE_SOURCE_DIR}/third_party/include)
 
 set(Common_include ${CMAKE_SOURCE_DIR}/third_party/include ${CMAKE_SOURCE_DIR})
 
-add_library(common_lib "src/mesh.cpp" "src/model.cpp")
+add_library(common_lib "src/mesh.cpp" "src/model.cpp" "src/shader.cpp")
 target_include_directories(common_lib PRIVATE ${Common_include})
 target_link_libraries(common_lib ${ASSIMP_LIBRARIES})
 
