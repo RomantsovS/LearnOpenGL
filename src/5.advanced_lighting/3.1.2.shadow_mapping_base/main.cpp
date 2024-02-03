@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include <learnopengl/common.h>
 
-void renderScene(const Shader& shader);
+void renderScene(Shader& shader);
 void renderCube();
 void renderQuad();
 
@@ -260,7 +260,7 @@ int main() {
 
 // renders the 3D scene
 // --------------------
-void renderScene(const Shader& shader) {
+void renderScene(Shader& shader) {
     // floor
     glm::mat4 model = glm::mat4(1.0f);
     shader.setMat4("model", model);
