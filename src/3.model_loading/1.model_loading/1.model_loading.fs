@@ -6,6 +6,7 @@ uniform vec3 viewPos;
 struct Material {
     sampler2D texture_diffuse1;
     sampler2D texture_specular1;
+    sampler2D texture_reflection1;
     
     vec3 color_ambient;
     vec3 color_diffuse;
@@ -85,7 +86,8 @@ void main()
     
     vec3 I = normalize(Position - viewPos);
     vec3 R = reflect(I, normalize(Normal));
-    //result = result + texture(skybox, R).rgb * texture(material.texture_specular1, TexCoords).r;
+    result = result + texture(skybox, R).rgb * texture(material.texture_reflection1, TexCoords).r;
+    // result = vec3(texture(material.texture_specular1, TexCoords).rgb);
 
     FragColor = vec4(result, 1.0);
 }

@@ -104,8 +104,8 @@ int main() {
     skyboxShader.use();
     skyboxShader.setInt("skybox", 0);
 
-    // lightingShader.use();
-    // lightingShader.setInt("skybox", 5);
+    lightingShader.use();
+    lightingShader.setInt("skybox", 5);
 
     // render loop
     // -----------
@@ -210,6 +210,9 @@ int main() {
             glActiveTexture(GL_TEXTURE1);
             lightingShader.setInt("material.texture_specular1", 1);
             glBindTexture(GL_TEXTURE_2D, Mesh::dummy_textures.at("texture_diffuse").id);
+            glActiveTexture(GL_TEXTURE2);
+            lightingShader.setInt("material.texture_reflection1", 2);
+            glBindTexture(GL_TEXTURE_2D, Mesh::dummy_textures.at("texture_specular").id);
             auto model = glm::mat4(1.0f);
             model = glm::scale(model, glm::vec3(20.0, 1.0, 20.0));
             lightingShader.setMat4("model", model);
