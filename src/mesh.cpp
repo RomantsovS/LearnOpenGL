@@ -84,9 +84,9 @@ void Mesh::Draw(Shader &shader) const {
 
 void Mesh::loadDummyTextures() {
     std::unordered_map<aiTextureType, std::string> dummy_textures{
-        {aiTextureType_DIFFUSE, "dummy_diffuse.png"},
-        {aiTextureType_SPECULAR, "dummy_diffuse.png"},
-        {aiTextureType_AMBIENT, "dummy_specular.png"}};
+        {aiTextureType_DIFFUSE, "dummy_white.png"},
+        {aiTextureType_SPECULAR, "dummy_white.png"},
+        {aiTextureType_AMBIENT, "dummy_black.png"}};
     for (auto &[ai_type, name] : dummy_textures) {
         Texture texture;
         texture.id = TextureFromFile(name, "resources/textures");

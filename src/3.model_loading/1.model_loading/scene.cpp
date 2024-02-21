@@ -7,8 +7,8 @@ void Scene::AddModel(const std::string& file_name, glm::vec3 pos, glm::vec3 scal
     }
 
     for (const auto& mesh : models.at(file_name).meshes) {
-        if (mesh.is_dissolve()) {
-            render_meshes_dissolve.push_back(RenderMesh{&mesh, pos, scale, angle});
+        if (mesh.isTransparent()) {
+            render_meshes_transparent.push_back(RenderMesh{&mesh, pos, scale, angle});
         } else {
             render_meshes.push_back(RenderMesh{&mesh, pos, scale, angle});
         }
@@ -19,8 +19,10 @@ void Scene::Render(Shader& shader) {
     for (const auto& mesh : render_meshes) {
         DrawMesh(shader, mesh);
     }
+}
 
-    for (const auto& mesh : render_meshes_dissolve) {
+void Scene::RenderTransparent(Shader& shader) {
+    for (const auto& mesh : render_meshes_transparent) {
         DrawMesh(shader, mesh);
     }
 }

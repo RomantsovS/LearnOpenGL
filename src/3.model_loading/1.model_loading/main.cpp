@@ -198,10 +198,10 @@ int main() {
             glBindTexture(GL_TEXTURE_2D, Mesh::dummy_textures.at("texture_diffuse").id);
             glActiveTexture(GL_TEXTURE1);
             lightingShader.setInt("material.texture_specular1", 1);
-            glBindTexture(GL_TEXTURE_2D, Mesh::dummy_textures.at("texture_diffuse").id);
+            glBindTexture(GL_TEXTURE_2D, Mesh::dummy_textures.at("texture_specular").id);
             glActiveTexture(GL_TEXTURE2);
             lightingShader.setInt("material.texture_reflection1", 2);
-            glBindTexture(GL_TEXTURE_2D, Mesh::dummy_textures.at("texture_specular").id);
+            glBindTexture(GL_TEXTURE_2D, Mesh::dummy_textures.at("texture_reflection").id);
             auto model = glm::mat4(1.0f);
             model = glm::scale(model, glm::vec3(20.0, 1.0, 20.0));
             lightingShader.setMat4("model", model);
@@ -210,7 +210,6 @@ int main() {
 
         glActiveTexture(GL_TEXTURE5);
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-        // render the loaded model
         scene.Render(lightingShader);
 
         // also draw the lamp object
@@ -226,8 +225,11 @@ int main() {
             DrawLightCube(lightCubeShader);
         }
 
+        lightingShader.use();
+        scene.RenderTransparent(lightingShader);
+
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal
-                                 // to depth buffer's content
+        // to depth buffer's content
         skyboxShader.use();
         skyboxShader.setMat4("view", glm::mat4(glm::mat3(view)));
         skyboxShader.setMat4("projection", projection);

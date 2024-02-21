@@ -21,13 +21,14 @@ class Scene {
                   const std::vector<std::string> &mesh_names = {});
 
     void Render(Shader &shader);
+    void RenderTransparent(Shader &shader);
 
    private:
     void DrawMesh(Shader &shader, const RenderMesh &mesh);
 
     std::unordered_map<std::string, Model> models;
     std::vector<RenderMesh> render_meshes;
-    std::vector<RenderMesh> render_meshes_dissolve;
+    std::vector<RenderMesh> render_meshes_transparent;
 };
 
 #endif

@@ -88,7 +88,7 @@ void main()
     vec3 I = normalize(Position - viewPos);
     vec3 R = reflect(I, normalize(Normal));
     result = result + texture(skybox, R).rgb * texture(material.texture_reflection1, TexCoords).r;
-    // result = vec3(texture(material.texture_specular1, TexCoords).rgb);
+    // result = vec3(texture(material.texture_reflection1, TexCoords).rgb);
 
     FragColor = vec4(result, material.dissolve);
 }

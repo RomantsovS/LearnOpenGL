@@ -58,7 +58,7 @@ class Mesh {
     unsigned int getVAO() const { return VAO; }
     const std::vector<unsigned int> &getindices() const { return indices; }
 
-    bool is_dissolve() const { return material.dissolve != 1.0; }
+    bool isTransparent() const { return material.dissolve != 1.0; }
 
     static std::map<std::string, Texture> dummy_textures;
     static void loadDummyTextures();
