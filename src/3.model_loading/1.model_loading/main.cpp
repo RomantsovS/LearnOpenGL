@@ -2,7 +2,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
-#include <learnopengl/common.h>
+
+#include "learnopengl/common.h"
+#include "scene.h"
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -60,7 +62,7 @@ int main() {
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
-    // glEnable(GL_BLEND);
+    glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // build and compile shaders
@@ -76,19 +78,18 @@ int main() {
     Mesh::loadDummyTextures();
     // load models
     // -----------
-    std::vector<RenderModel> models;
-    models.push_back({Model("resources/objects/cottage/cottage_obj.obj", {"Cube_Cube.002"}),
-                      glm::vec3{0, 0, -10}, glm::vec3{0.4f}, 0});
-    models.push_back({Model("resources/objects/cottage2/Cottage_FREE.obj"), glm::vec3{0, 0, 10},
-                      glm::vec3{1.2}, 0});
-    models.push_back({Model("resources/objects/tower/wooden_watch_tower2.obj"), glm::vec3{10, 0, 0},
-                      glm::vec3{1}, 0});
-    models.push_back(
-        {Model("resources/objects/nanosuit/nanosuit.obj"), glm::vec3{0, 0, 0}, glm::vec3{0.18}, 0});
-    models.push_back(
-        {Model("resources/objects/seahawk/Seahawk.obj"), glm::vec3{-15, 0, -5}, glm::vec3{0.1}, 0});
-    models.push_back(
-        {Model("resources/objects/tree/Tree.obj"), glm::vec3{-5, 0, 0}, glm::vec3{1}, 0});
+    Scene scene;
+    scene.AddModel("resources/objects/cottage/cottage_obj.obj", glm::vec3{0, 0, -10},
+                   glm::vec3{0.4f}, 0, {"Cube_Cube.002"});
+    scene.AddModel("resources/objects/cottage2/Cottage_FREE.obj", glm::vec3{0, 0, 10},
+                   glm::vec3{1.2}, 0);
+    scene.AddModel("resources/objects/tower/wooden_watch_tower2.obj", glm::vec3{10, 0, 0},
+                   glm::vec3{1}, 0);
+    scene.AddModel("resources/objects/nanosuit/nanosuit.obj", glm::vec3{0, 0, 0}, glm::vec3{0.18},
+                   0);
+    scene.AddModel("resources/objects/seahawk/Seahawk.obj", glm::vec3{-15, 0, -5}, glm::vec3{0.1},
+                   0);
+    scene.AddModel("resources/objects/tree/Tree.obj", glm::vec3{-5, 0, 0}, glm::vec3{1}, 0);
 
     // lighting
     std::vector<glm::vec3> pointLightPositions{
@@ -191,18 +192,6 @@ int main() {
             lightingShader.setVec3(name + "specular", lightColors[i]);
         }
 
-        glActiveTexture(GL_TEXTURE5);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-        // render the loaded model
-        for (const auto& mod : models) {
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, mod.pos);
-            model = glm::scale(model, mod.scale);
-            model = glm::rotate(model, glm::radians(mod.angle), glm::vec3(0.0f, 1.0f, 0.0f));
-            lightingShader.setMat4("model", model);
-            mod.Draw(lightingShader);
-        }
-
         {
             glActiveTexture(GL_TEXTURE0);
             lightingShader.setInt("material.texture_diffuse1", 0);
@@ -218,6 +207,11 @@ int main() {
             lightingShader.setMat4("model", model);
             DrawGround(lightingShader);
         }
+
+        glActiveTexture(GL_TEXTURE5);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+        // render the loaded model
+        scene.Render(lightingShader);
 
         // also draw the lamp object
         lightCubeShader.use();
@@ -289,6 +283,7 @@ void DrawGround(Shader& shader) {
     shader.setVec3("material.color_diffuse", diffuseColor);
     shader.setVec3("material.color_specular", lightColor);
     shader.setFloat("material.shininess", 128);
+    shader.setFloat("material.dissolve", 1.0);
 
     glBindVertexArray(lightCubeVAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);

@@ -13,6 +13,7 @@ struct Material {
     vec3 color_specular;
 
     float shininess;
+    float dissolve;
 }; 
   
 uniform Material material;
@@ -89,7 +90,7 @@ void main()
     result = result + texture(skybox, R).rgb * texture(material.texture_reflection1, TexCoords).r;
     // result = vec3(texture(material.texture_specular1, TexCoords).rgb);
 
-    FragColor = vec4(result, 1.0);
+    FragColor = vec4(result, material.dissolve);
 }
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)

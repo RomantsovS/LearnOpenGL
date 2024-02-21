@@ -71,6 +71,7 @@ void Mesh::Draw(Shader &shader) const {
     }
     shader.setVec3("material.color_specular", material.color_specular);
     shader.setFloat("material.shininess", material.shininess);
+    shader.setFloat("material.dissolve", material.dissolve);
 
     // draw mesh
     glBindVertexArray(VAO);
@@ -84,7 +85,7 @@ void Mesh::Draw(Shader &shader) const {
 void Mesh::loadDummyTextures() {
     std::unordered_map<aiTextureType, std::string> dummy_textures{
         {aiTextureType_DIFFUSE, "dummy_diffuse.png"},
-        {aiTextureType_SPECULAR, "dummy_specular.png"},
+        {aiTextureType_SPECULAR, "dummy_diffuse.png"},
         {aiTextureType_AMBIENT, "dummy_specular.png"}};
     for (auto &[ai_type, name] : dummy_textures) {
         Texture texture;

@@ -145,6 +145,10 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
     if (material.shininess <= 0) {
         material.shininess = 1;
     }
+    if (AI_SUCCESS != ai_material->Get(AI_MATKEY_OPACITY, material.dissolve)) {
+        throw std::runtime_error("fail getting AI_MATKEY_OPACITY");
+    }
+    assert(material.dissolve >= 0.0 && material.dissolve <= 1.0);
 
     std::cout << "mesh: " << mesh->mName.C_Str() << ": verts: " << mesh->mNumVertices << '\n';
     glm::vec3 min(0), max(0);
