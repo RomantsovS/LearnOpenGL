@@ -151,6 +151,22 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
     }
     assert(material.dissolve >= 0.0 && material.dissolve <= 1.0);
 
+    // if (AI_SUCCESS != ai_material->Get(AI_MATKEY_TRANSPARENCYFACTOR, material.dissolve)) {
+    //     throw std::runtime_error("fail getting AI_MATKEY_OPACITY");
+    // }
+    // if (AI_SUCCESS != ai_material->Get(AI_MATKEY_REFLECTIVITY, material.dissolve)) {
+    //     throw std::runtime_error("fail getting AI_MATKEY_OPACITY");
+    // }
+    if (AI_SUCCESS != ai_material->Get(AI_MATKEY_REFRACTI, material.refracti)) {
+        throw std::runtime_error("fail getting AI_MATKEY_OPACITY");
+    }
+    if (AI_SUCCESS != ai_material->Get(AI_MATKEY_COLOR_TRANSPARENT, color)) {
+        throw std::runtime_error("fail getting AI_MATKEY_COLOR_TRANSPARENT");
+    }
+    // if (AI_SUCCESS != ai_material->Get(AI_MATKEY_COLOR_REFLECTIVE, color)) {
+    //     throw std::runtime_error("fail getting AI_MATKEY_COLOR_TRANSPARENT");
+    // }
+
     std::cout << "mesh: " << mesh->mName.C_Str() << ": verts: " << mesh->mNumVertices << '\n';
     glm::vec3 min(0), max(0);
     for (size_t j = 0; j < mesh->mNumVertices; ++j) {

@@ -43,6 +43,7 @@ struct Material {
     glm::vec3 color_specular;
     float shininess = 0;
     float dissolve = 1.0;
+    float refracti = 1.0;
 };
 
 extern std::map<aiTextureType, std::string> ai_texture_type_to_type;
