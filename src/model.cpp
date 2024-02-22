@@ -121,6 +121,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
 
     Material material;
     aiColor3D color(0.f, 0.f, 0.f);
+    material.name = ai_material->GetName().C_Str();
     if (AI_SUCCESS != ai_material->Get(AI_MATKEY_COLOR_DIFFUSE, color)) {
         throw std::runtime_error("fail getting AI_MATKEY_COLOR_DIFFUSE");
     }
@@ -168,7 +169,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
               << '\n';
 
     // return a mesh object created from the extracted mesh data
-    return Mesh(vertices, indices, textures, material);
+    return Mesh(mesh->mName.C_Str(), vertices, indices, textures, material);
 }
 
 std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type) {

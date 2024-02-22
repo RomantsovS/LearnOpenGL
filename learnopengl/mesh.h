@@ -37,6 +37,7 @@ struct Texture {
 };
 
 struct Material {
+    std::string name;
     glm::vec3 color_ambient;
     glm::vec3 color_diffuse;
     glm::vec3 color_specular;
@@ -49,7 +50,7 @@ extern std::map<aiTextureType, std::string> ai_texture_type_to_type;
 class Mesh {
    public:
     // constructor
-    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices,
+    Mesh(const std::string &name, std::vector<Vertex> vertices, std::vector<unsigned int> indices,
          std::multimap<std::string, Texture> textures, Material material);
 
     // render the mesh
@@ -65,6 +66,7 @@ class Mesh {
 
    private:
     // mesh Data
+    std::string name;
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
     std::multimap<std::string, Texture> textures;

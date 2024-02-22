@@ -7,8 +7,9 @@ std::map<aiTextureType, std::string> ai_texture_type_to_type = {
     {aiTextureType_AMBIENT, "texture_reflection"}};
 std::map<std::string, Texture> Mesh::dummy_textures;
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices,
+Mesh::Mesh(const std::string &name, std::vector<Vertex> vertices, std::vector<unsigned int> indices,
            std::multimap<std::string, Texture> textures, Material material) {
+    this->name = name;
     this->vertices = vertices;
     this->indices = indices;
     this->textures = textures;
