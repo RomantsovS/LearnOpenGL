@@ -6,7 +6,6 @@
 #include <glad/glad.h>
 #include <learnopengl/mesh.h>
 #include <learnopengl/shader.h>
-#include <stb_image.h>
 
 #include <assimp/Importer.hpp>
 #include <fstream>

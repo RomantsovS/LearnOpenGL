@@ -79,16 +79,17 @@ int main() {
     // load models
     // -----------
     Scene scene;
-    scene.AddModel("resources/objects/cottage/cottage_obj.obj", glm::vec3{0, 0, -10},
-                   glm::vec3{0.4f}, 0, {"Cube_Cube.002"});
-    scene.AddModel("resources/objects/cottage2/Cottage_FREE.obj", glm::vec3{0, 0, 10},
-                   glm::vec3{1.2}, 0);
-    scene.AddModel("resources/objects/tower/wooden_watch_tower2.obj", glm::vec3{10, 0, 0},
-                   glm::vec3{1}, 0);
-    scene.AddModel("resources/objects/nanosuit/nanosuit.obj", glm::vec3{0, 0, 0}, glm::vec3{0.18},
-                   0);
+    // scene.AddModel("resources/objects/cottage/cottage_obj.obj", glm::vec3{0, 0, -10},
+    //                glm::vec3{0.4f}, 0, {"Cube_Cube.002"});
+    // scene.AddModel("resources/objects/cottage2/Cottage_FREE.obj", glm::vec3{0, 0, 10},
+    //                glm::vec3{1.2}, 0);
+    // scene.AddModel("resources/objects/tower/wooden_watch_tower2.obj", glm::vec3{10, 0, 0},
+    //                glm::vec3{1}, 0);
+    // scene.AddModel("resources/objects/nanosuit/nanosuit.obj", glm::vec3{0, 0, 0},
+    // glm::vec3{0.18},
+    //                0);
     scene.AddModel("resources/objects/seahawk/Seahawk.obj", glm::vec3{-15, 0, -5}, glm::vec3{0.1},
-                   0);
+                   0, {"Glass1"});
     scene.AddModel("resources/objects/tree/Tree.obj", glm::vec3{-5, 0, 0}, glm::vec3{1}, 0);
 
     // lighting

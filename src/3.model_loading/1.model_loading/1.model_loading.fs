@@ -14,6 +14,8 @@ struct Material {
 
     float shininess;
     float dissolve;
+
+    bool use_diffuse_alpha;
 }; 
   
 uniform Material material;
@@ -88,9 +90,12 @@ void main()
     vec3 I = normalize(Position - viewPos);
     vec3 R = reflect(I, normalize(Normal));
     result = result + texture(skybox, R).rgb * texture(material.texture_reflection1, TexCoords).r;
-    // result = vec3(texture(material.texture_reflection1, TexCoords).rgb);
+    
+    float alpha = material.dissolve;
+    if(material.use_diffuse_alpha)
+        alpha = texture(material.texture_diffuse1, TexCoords).a;
 
-    FragColor = vec4(result, material.dissolve);
+    FragColor = vec4(result, alpha);
 }
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)

@@ -74,6 +74,13 @@ void Mesh::Draw(Shader &shader) const {
     shader.setFloat("material.shininess", material.shininess);
     shader.setFloat("material.dissolve", material.dissolve);
 
+    auto iter = textures.find("texture_diffuse");
+    if (iter != textures.end()) {
+        shader.setBool("material.use_diffuse_alpha", iter->second.num_components == 4);
+    } else {
+        shader.setBool("material.use_dissuse_alpha", false);
+    }
+
     // draw mesh
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
@@ -89,10 +96,8 @@ void Mesh::loadDummyTextures() {
         {aiTextureType_SPECULAR, "dummy_white.png"},
         {aiTextureType_AMBIENT, "dummy_black.png"}};
     for (auto &[ai_type, name] : dummy_textures) {
-        Texture texture;
-        texture.id = TextureFromFile(name, "resources/textures");
+        Texture texture = TextureFromFile(name, "resources/textures");
         texture.type = ai_texture_type_to_type[ai_type];
-        texture.path = name;
         Mesh::dummy_textures[texture.type] = texture;
     }
 }
